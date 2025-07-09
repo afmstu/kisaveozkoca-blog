@@ -1448,17 +1448,43 @@
       }
     }
 
+    // İstatistikleri güncelle
+    function updateStats(posts) {
+      // Toplam yazı sayısı
+      const totalPostsElement = document.getElementById('totalPosts');
+      if (totalPostsElement) {
+        totalPostsElement.textContent = posts.length;
+      }
+      
+      // Toplam yorum sayısı
+      const totalCommentsElement = document.getElementById('totalComments');
+      if (totalCommentsElement) {
+        const totalComments = posts.reduce((total, post) => {
+          return total + (post.comments ? post.comments.length : 0);
+        }, 0);
+        totalCommentsElement.textContent = totalComments;
+      }
+      
+      // Bugünkü yazı sayısı
+      const todayPostsElement = document.getElementById('todayPosts');
+      if (todayPostsElement) {
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD formatı
+        
+        const todayPosts = posts.filter(post => {
+          const postDate = new Date(post.created_at).toISOString().split('T')[0];
+          return postDate === todayString;
+        }).length;
+        
+        todayPostsElement.textContent = todayPosts;
+      }
+    }
+
     // Postları yükle ve yorum formlarını güncelle
     async function loadPosts() {
       try {
         const posts = await blogService.getPosts();
         const container = document.getElementById('postsContainer');
-        
-        // Toplam yazı sayısını güncelle
-        const totalPostsElement = document.getElementById('totalPosts');
-        if (totalPostsElement) {
-          totalPostsElement.textContent = posts.length;
-        }
         
         if (posts.length === 0) {
           container.innerHTML = `
@@ -1468,6 +1494,9 @@
               <p>İlk yazıyı paylaşmak için admin girişi yapın.</p>
             </div>
           `;
+          
+          // Boş durumda da istatistikleri güncelle
+          updateStats([]);
           return;
         }
         
@@ -1521,6 +1550,10 @@
             </div>
           </div>
         `).join('');
+        
+        // İstatistikleri güncelle
+        updateStats(posts);
+        
       } catch (error) {
         console.error('Postlar yüklenirken hata:', error);
       }
@@ -1648,15 +1681,8 @@
             // Formu temizle
             postForm.reset();
             
-            // Postları yeniden yükle
+            // Postları yeniden yükle (bu zaten istatistikleri güncelleyecek)
             await loadPosts();
-            
-            // İstatistikleri güncelle
-            const totalPostsElement = document.getElementById('totalPosts');
-            if (totalPostsElement) {
-              const currentPosts = await blogService.getPosts();
-              totalPostsElement.textContent = currentPosts.length;
-            }
             
             alert('Yazınız başarıyla yayımlandı!');
             
