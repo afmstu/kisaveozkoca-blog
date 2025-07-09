@@ -1522,6 +1522,12 @@
 
     // Yazı silme fonksiyonu
     async function deletePost(postId) {
+      // Admin kontrolü
+      if (!window.isAdmin) {
+        alert('Bu işlem için admin yetkisi gereklidir!');
+        return;
+      }
+      
       if (!confirm('Bu yazıyı silmek istediğinizden emin misiniz?')) {
         return;
       }

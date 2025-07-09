@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Admin state
   let isAdmin = false;
+  window.isAdmin = false; // Global erişim için
   
   // Simple test - add click handler to admin button
   if (adminToggle) {
@@ -145,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
           if (adminData && adminData.is_admin) {
             console.log('User is admin');
             isAdmin = true;
+            window.isAdmin = true; // Global erişim için
             updateAdminUI();
             hideModal();
             adminLoginForm.reset();
@@ -188,6 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!adminError && adminData && adminData.is_admin) {
           console.log('User is admin');
           isAdmin = true;
+          window.isAdmin = true; // Global erişim için
           updateAdminUI();
         }
       }
@@ -209,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       console.log('User signed out');
       isAdmin = false;
+      window.isAdmin = false; // Global erişim için
       updateAdminUI();
       alert('Admin çıkışı yapıldı!');
     } catch (error) {
