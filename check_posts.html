@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yazıları Kontrol Et</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Supabase Yazı Kontrolü</h1>
+        <p>Bu sayfa Supabase veritabanındaki tüm yazıları gösterir.</p>
+        
+        <button onclick="checkPosts()">Yazıları Kontrol Et</button>
+        <button onclick="clearResults()">Sonuçları Temizle</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js'
+
+        const supabaseUrl = 'https://xdjyeicdaemdjqntdwsy.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
+
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        window.checkPosts = async function() {
+            const resultsDiv = document.getElementById('results')
+            resultsDiv.textContent = 'Yazılar kontrol ediliyor...'
+            
+            try {
+                console.log('Supabase\'den yazılar kontrol ediliyor...')
+                
+                const { data, error } = await supabase
+                    .from('posts')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                
+                if (error) {
+                    console.error('Hata:', error)
+                    resultsDiv.textContent = 'Hata: ' + error.message
+                    return
+                }
+                
+                let output = `Toplam yazı sayısı: ${data.length}\n\n=== YAZILAR ===\n`
+                
+                if (data.length === 0) {
+                    output += 'Henüz hiç yazı yok.\n'
+                } else {
+                    data.forEach((post, index) => {
+                        output += `\n${index + 1}. Yazı:\n`
+                        output += `   ID: ${post.id}\n`
+                        output += `   Başlık: ${post.title}\n`
+                        output += `   İçerik: ${post.content.substring(0, 100)}...\n`
+                        output += `   Oluşturulma: ${new Date(post.created_at).toLocaleString('tr-TR')}\n`
+                        output += `   Yorum sayısı: ${post.comments ? post.comments.length : 0}\n`
+                    })
+                }
+                
+                resultsDiv.textContent = output
+                console.log(output)
+                
+            } catch (error) {
+                console.error('Script hatası:', error)
+                resultsDiv.textContent = 'Script hatası: ' + error.message
+            }
+        }
+
+        window.clearResults = function() {
+            document.getElementById('results').textContent = ''
+        }
+
+        // Sayfa yüklendiğinde otomatik kontrol et
+        window.addEventListener('load', function() {
+            checkPosts()
+        })
+    </script>
+</body>
+</html> 

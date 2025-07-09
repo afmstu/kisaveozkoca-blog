@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kısaveözkoca</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --bg-secondary: white;
+      --text-primary: #2c3e50;
+      --text-secondary: #555;
+      --text-light: #6c757d;
+      --border-color: #e9ecef;
+      --shadow: 0 10px 30px rgba(0,0,0,0.1);
+      --card-bg: white;
+      --navbar-bg: rgba(255, 255, 255, 0.95);
+      --hero-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      --bg-secondary: #0f0f23;
+      --text-primary: #ffffff;
+      --text-secondary: #e0e0e0;
+      --text-light: #b0b0b0;
+      --border-color: #2a2a3e;
+      --shadow: 0 10px 30px rgba(0,0,0,0.3);
+      --card-bg: #1a1a2e;
+      --navbar-bg: rgba(26, 26, 46, 0.95);
+      --hero-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-primary);
+      min-height: 100vh;
+      transition: all 0.3s ease;
+    }
+    
+    .navbar {
+      background: var(--navbar-bg) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      min-height: 70px;
+    }
+    
+    .navbar-nav {
+      align-items: center;
+    }
+    
+    .navbar-nav .nav-item {
+      margin: 0 5px;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #667eea !important;
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      color: var(--text-primary) !important;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      padding: 8px 16px !important;
+      margin: 0 5px;
+    }
+    
+    .nav-link:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white !important;
+      transform: translateY(-2px);
+    }
+    
+    .nav-link.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white !important;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(102, 126, 234, 0.1);
+      transform: scale(1.1);
+    }
+    
+    .admin-toggle {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .admin-toggle:hover {
+      background: rgba(220, 53, 69, 0.1);
+      transform: scale(1.1);
+    }
+    
+    .admin-toggle.admin-active {
+      background: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+    }
+    
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .hero-section {
+      background: var(--hero-bg);
+      color: white;
+      padding: 80px 0;
+      margin-bottom: 40px;
+      border-radius: 0 0 30px 30px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+    
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+    
+
+    
+    .post-form-card,
+    .admin-login-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      border: none;
+      margin-bottom: 40px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .admin-login-header {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+      padding: 25px 30px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .post-form-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px 30px;
+      margin: 0;
+    }
+    
+    .admin-badge {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+    
+    .form-control {
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 15px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+    
+    .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+
+    .form-control::placeholder {
+      color: var(--text-light);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 30px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .post-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      border: none;
+      margin-bottom: 30px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .post-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .post-header {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 25px 30px;
+      border-bottom: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .post-header {
+      background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+    }
+    
+    .post-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .post-content {
+      padding: 25px 30px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+    
+    .comments-section {
+      background: #f8f9fa;
+      padding: 25px 30px;
+      border-top: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .comments-section {
+      background: #2a2a3e;
+    }
+    
+    .comments-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .comment-item {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-left: 4px solid #667eea;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .comment-form {
+      margin-top: 20px;
+    }
+    
+    .input-group {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn-outline-secondary {
+      border: none;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+      padding: 12px 25px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      color: white;
+      transform: translateY(-1px);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-light);
+      transition: all 0.3s ease;
+    }
+    
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+    
+    .stats {
+      background: var(--card-bg);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 15px;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #667eea;
+    }
+    
+    .stat-label {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    
+    .visitor-notice {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      border: 1px solid #ffeaa7;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .visitor-notice {
+      background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+      border: 1px solid #667eea;
+      color: var(--text-secondary);
+    }
+    
+    .visitor-notice i {
+      font-size: 2rem;
+      color: #856404;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .visitor-notice i {
+      color: #667eea;
+    }
+    
+    .visitor-notice h5 {
+      color: #856404;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .visitor-notice h5 {
+      color: var(--text-primary);
+    }
+    
+    .visitor-notice p {
+      color: #856404;
+      margin: 0;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .visitor-notice p {
+      color: var(--text-secondary);
+    }
+
+    .form-label {
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+    
+    /* İletişim bölümü */
+    .contact-section {
+      margin-top: 60px;
+      padding: 60px 0;
+      background: var(--bg-secondary);
+      border-radius: 30px 30px 0 0;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .contact-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .contact-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .contact-header h2 {
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    
+    .contact-header p {
+      opacity: 0.9;
+      margin: 0;
+    }
+    
+    .contact-body {
+      padding: 40px;
+    }
+    
+    .contact-body .form-control {
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 15px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+    
+    .contact-body .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+    
+    .contact-body .form-control::placeholder {
+      color: var(--text-light);
+    }
+    
+    .contact-body .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    
+    .contact-body .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Kalem yazma animasyonu */
+    @keyframes writing {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-2px) rotate(-5deg);
+      }
+      50% {
+        transform: translateY(-1px) rotate(2deg);
+      }
+      75% {
+        transform: translateY(-3px) rotate(-3deg);
+      }
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+    }
+    
+    .writing-animation {
+      animation: writing 0.3s ease-in-out infinite;
+      transform-origin: center;
+    }
+    
+    .hero-title .fas.fa-pen {
+      animation: writing 0.3s ease-in-out infinite;
+      animation-delay: 0.5s;
+      animation-duration: 1.5s;
+      animation-iteration-count: 1;
+      transform-origin: center;
+    }
+    
+    /* Playlist Önerisi */
+    .playlist-section {
+      margin-top: 60px;
+      padding: 60px 0;
+      background: var(--bg-secondary);
+      border-radius: 30px 30px 0 0;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+    }
+
+    .playlist-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .playlist-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .playlist-header h2 {
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .playlist-container {
+      padding: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .playlist-item {
+      background: var(--card-bg);
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      width: calc(25% - 15px); /* 4 kolonlu grid */
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 20px;
+    }
+
+    /* Responsive tasarım için */
+    @media (max-width: 768px) {
+      .playlist-item {
+        width: calc(50% - 10px); /* 2 kolonlu grid */
+        min-height: 250px;
+      }
+      
+      .playlist-admin-actions {
+        top: 5px;
+        right: 5px;
+      }
+      
+      .playlist-admin-actions .btn {
+        font-size: 0.7rem;
+        padding: 4px 6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .playlist-item {
+        width: 100%; /* 1 kolonlu grid */
+        margin-bottom: 15px;
+        min-height: 300px;
+        padding: 15px;
+      }
+      
+      .playlist-container {
+        padding: 15px;
+      }
+      
+      .playlist-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      .playlist-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .playlist-title {
+        font-size: 1rem;
+      }
+      
+      .playlist-description {
+        font-size: 0.8rem;
+      }
+      
+      .comment-form .row {
+        flex-direction: column;
+      }
+      
+      .comment-form .col-md-4,
+      .comment-form .col-md-8 {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+
+    .playlist-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .playlist-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .playlist-item-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .playlist-icon {
+      font-size: 1.5rem;
+      color: #1DB954;
+      margin-right: 10px;
+    }
+
+    .playlist-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+    }
+
+    .playlist-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      flex: 1;
+    }
+
+    .spotify-link {
+      color: #1DB954;
+      text-decoration: none;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .spotify-link:hover {
+      color: #1ed760;
+      transform: translateX(5px);
+    }
+
+    .playlist-admin-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+    }
+
+    .playlist-comments {
+      margin-top: 15px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 15px;
+    }
+
+    .playlist-comments h6 {
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .comments-list {
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+
+    .comment-item {
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 8px;
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .comment-header strong {
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+
+    .comment-header small {
+      font-size: 0.7rem;
+    }
+
+    .comment-text {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .comment-form {
+      margin-top: 10px;
+    }
+
+    .comment-form .form-control {
+      font-size: 0.8rem;
+      padding: 8px;
+    }
+
+    .comment-form .btn {
+      font-size: 0.8rem;
+      padding: 8px 12px;
+    }
+
+    .playlist-item .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .playlist-item:hover .overlay {
+      opacity: 1;
+    }
+
+    .playlist-item .play-icon {
+      font-size: 4rem;
+      color: white;
+      opacity: 0.8;
+    }
+
+    .playlist-content {
+      padding: 20px;
+    }
+
+    .playlist-admin-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+    }
+
+    .playlist-comments {
+      border-top: 1px solid var(--border-color);
+      padding: 20px;
+      background: rgba(0,0,0,0.02);
+    }
+
+    .comments-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+    }
+
+    .comment-item {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-left: 3px solid #667eea;
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .comment-text {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .comment-form {
+      border-top: 1px solid var(--border-color);
+      padding-top: 15px;
+    }
+
+
+
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <i class="fas fa-pen me-2"></i>
+        kısaveözkoca
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="index.html">
+              <i class="fas fa-home me-1"></i>Ana Sayfa
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">
+              <i class="fas fa-user me-1"></i>Hakkında
+            </a>
+          </li>
+          <li class="nav-item">
+            <button class="theme-toggle" id="themeToggle" title="Karanlık Modu Aç/Kapat">
+              <i class="fas fa-moon"></i>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="admin-toggle" id="adminToggle" title="Admin Girişi">
+              <i class="fas fa-crown"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero-section" style="margin-top: 80px;">
+    <div class="container">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+          <h1 class="hero-title">
+            <i class="fas fa-pen me-3"></i>
+            kısaveözkoca
+          </h1>
+          <p class="hero-subtitle">Havadan Sudan Biraz da Benden Fikirler</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Admin Post Form (Hidden by default) -->
+    <div class="post-form-card" id="adminPostForm" style="display: none;">
+      <h5 class="post-form-header">
+        <i class="fas fa-edit me-2"></i>
+        Yönetici Paneli - Fikrinizi Paylaşın
+        <span class="admin-badge">
+          <i class="fas fa-crown me-1"></i>ADMIN
+        </span>
+        <button class="btn btn-outline-light btn-sm ms-auto" id="logoutBtn" title="Çıkış Yap">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </h5>
+      <div class="card-body p-4">
+        <form id="postForm">
+          <div class="mb-3">
+            <label for="postTitle" class="form-label">
+              <i class="fas fa-heading me-2"></i>Başlık
+            </label>
+            <input type="text" class="form-control" id="postTitle" placeholder="Fikriniz ne hakkında?" required>
+          </div>
+          <div class="mb-3">
+            <label for="postContent" class="form-label">
+              <i class="fas fa-align-left me-2"></i>Düşünceleriniz
+            </label>
+            <textarea class="form-control" id="postContent" rows="4" placeholder="Yaratıcı düşüncelerinizi, içgörülerinizi veya fikirlerinizi paylaşın..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane me-2"></i>Yazıyı Yayınla
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Posts Container -->
+    <div id="postsContainer" class="mt-4">
+      <!-- Yazılar buraya dinamik olarak eklenecek -->
+    </div>
+
+    <!-- Playlist Önerisi Ana Sayfa -->
+    <div class="playlist-section">
+      <div class="playlist-card">
+        <div class="playlist-header d-flex align-items-center justify-content-between">
+          <h2 class="mb-0"><i class="fas fa-music me-2"></i>Playlistler</h2>
+          <button class="btn btn-success btn-sm" id="addPlaylistBtn" style="display:none;"><i class="fas fa-plus me-2"></i>Yeni Playlist</button>
+        </div>
+        <div class="playlist-container" id="mainPlaylistContainer">
+          <!-- Playlist'ler buraya dinamik olarak eklenecek -->
+        </div>
+        <!-- Playlist Ekle/Düzenle Formu (admin için) -->
+        <div class="p-3 p-md-4" id="playlistFormSection" style="display:none;">
+          <form id="mainPlaylistForm">
+            <input type="hidden" id="mainPlaylistId" value="">
+            <div class="mb-3">
+              <label for="mainPlaylistTitle" class="form-label">
+                <i class="fas fa-heading me-2"></i>Playlist Başlığı
+              </label>
+              <input type="text" class="form-control" id="mainPlaylistTitle" placeholder="Playlist başlığını girin" required>
+            </div>
+            <div class="mb-3">
+              <label for="mainPlaylistDescription" class="form-label">
+                <i class="fas fa-align-left me-2"></i>Açıklama
+              </label>
+              <textarea class="form-control" id="mainPlaylistDescription" rows="3" placeholder="Playlist açıklaması (opsiyonel)"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="mainSpotifyUrl" class="form-label">
+                <i class="fab fa-spotify me-2"></i>Spotify Playlist URL
+              </label>
+              <input type="url" class="form-control" id="mainSpotifyUrl" placeholder="https://open.spotify.com/playlist/..." required>
+            </div>
+            <div class="d-flex flex-column flex-sm-row gap-2">
+              <button type="submit" class="btn btn-primary flex-fill">
+                <i class="fas fa-save me-2"></i>Kaydet
+              </button>
+              <button type="button" class="btn btn-secondary flex-fill" id="cancelPlaylistFormBtn">
+                <i class="fas fa-times me-2"></i>İptal
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="stat-item">
+            <div class="stat-number" id="totalPosts">0</div>
+            <div class="stat-label">Toplam Yazı</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-item">
+            <div class="stat-number" id="totalComments">0</div>
+            <div class="stat-label">Toplam Yorum</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-item">
+            <div class="stat-number" id="todayPosts">0</div>
+            <div class="stat-label">Bugünkü Yazılar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Contact Section -->
+  <div class="contact-section">
+    <div class="container">
+      <div class="contact-card">
+        <div class="contact-header">
+          <h2><i class="fas fa-envelope me-2"></i>Benimle İletişime Geç</h2>
+          <p>Düşüncelerinizi paylaşın, sorularınızı sorun veya sadece merhaba deyin!</p>
+        </div>
+        <div class="contact-body">
+          <form id="contactForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="contactName" class="form-label">
+                    <i class="fas fa-user me-2"></i>Ad Soyad
+                  </label>
+                  <input type="text" class="form-control" id="contactName" placeholder="Adınız ve soyadınız" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="contactEmail" class="form-label">
+                    <i class="fas fa-envelope me-2"></i>E-posta
+                  </label>
+                  <input type="email" class="form-control" id="contactEmail" placeholder="ornek@email.com" required>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="contactMessage" class="form-label">
+                <i class="fas fa-comment me-2"></i>Mesajınız
+              </label>
+              <textarea class="form-control" id="contactMessage" rows="5" placeholder="Mesajınızı buraya yazın..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-paper-plane me-2"></i>Mesaj Gönder
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Login Modal -->
+  <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="adminLoginModalLabel">
+            <i class="fas fa-crown me-2"></i>Admin Girişi
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="adminLoginForm">
+            <div class="mb-3">
+              <label for="adminEmail" class="form-label">
+                <i class="fas fa-envelope me-2"></i>E-posta
+              </label>
+              <input type="email" class="form-control" id="adminEmail" placeholder="admin@example.com" required>
+            </div>
+            <div class="mb-3">
+              <label for="adminPassword" class="form-label">
+                <i class="fas fa-key me-2"></i>Şifre
+              </label>
+              <input type="password" class="form-control" id="adminPassword" placeholder="Şifrenizi girin" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+  <script>
+    // Global admin durumu
+    let isAdmin = false;
+
+    // Supabase client
+    const supabaseClient = supabase.createClient(
+      'https://xdjyeicdaemdjqntdwsy.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
+    );
+
+    // Blog service functions
+    const blogService = {
+      async getPosts() {
+        const { data, error } = await supabaseClient
+          .from('posts')
+          .select('*')
+          .order('created_at', { ascending: false })
+        
+        if (error) {
+          console.error('Yazılar getirilirken hata:', error)
+          return []
+        }
+        return data || []
+      },
+      
+      async createPost(post) {
+        const { data, error } = await supabaseClient
+          .from('posts')
+          .insert([{
+            title: post.title,
+            content: post.content,
+            comments: post.comments || []
+          }])
+          .select()
+        
+        if (error) {
+          console.error('Yazı eklenirken hata:', error)
+          throw error
+        }
+        return data[0]
+      },
+      
+      async addComment(postId, commentData) {
+        const post = await this.getPost(postId)
+        const comments = post.comments || []
+        comments.push({
+          id: Date.now(),
+          name: commentData.name,
+          text: commentData.text,
+          replies: [],
+          timestamp: new Date().toISOString(),
+          date: new Date().toLocaleDateString('tr-TR', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        })
+        
+        return await this.updatePost(postId, { comments })
+      },
+      
+      async getPost(id) {
+        const { data, error } = await supabaseClient
+          .from('posts')
+          .select('*')
+          .eq('id', id)
+          .single()
+        
+        if (error) {
+          console.error('Yazı getirilirken hata:', error)
+          return null
+        }
+        return data
+      },
+      
+      async updatePost(id, updates) {
+        const { data, error } = await supabaseClient
+          .from('posts')
+          .update(updates)
+          .eq('id', id)
+          .select()
+        
+        if (error) {
+          console.error('Yazı güncellenirken hata:', error)
+          throw error
+        }
+        return data[0]
+      }
+    };
+
+    // Admin kontrolü
+    async function checkAdminStatus() {
+      try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+          const { data: adminData, error: adminError } = await supabaseClient
+            .from('admin_users')
+            .select('is_admin')
+            .eq('id', user.id)
+            .single();
+          
+          if (!adminError && adminData && adminData.is_admin) {
+            isAdmin = true;
+          } else {
+            isAdmin = false;
+          }
+        } else {
+          isAdmin = false;
+        }
+      } catch (error) {
+        isAdmin = false;
+        console.error('Admin check error:', error);
+      }
+      updateAdminUI();
+      loadPosts();
+    }
+
+    // Admin UI'ını güncelle
+    function updateAdminUI() {
+      const addPlaylistBtn = document.getElementById('addPlaylistBtn');
+      if (addPlaylistBtn) addPlaylistBtn.style.display = isAdmin ? 'block' : 'none';
+      
+      const adminPostForm = document.getElementById('adminPostForm');
+      if (adminPostForm) adminPostForm.style.display = isAdmin ? 'block' : 'none';
+      
+      const visitorNotice = document.getElementById('visitorNotice');
+      if (visitorNotice) visitorNotice.style.display = isAdmin ? 'none' : 'block';
+      
+      // Admin buton ikonunu güncelle
+      const adminBtn = document.getElementById('adminToggle'); // Changed from adminBtn to adminToggle
+      if (adminBtn) {
+        const icon = adminBtn.querySelector('i');
+        if (isAdmin) {
+          icon.className = 'fas fa-crown';
+          adminBtn.title = 'Admin Paneli (Giriş Yapıldı)';
+        } else {
+          icon.className = 'fas fa-shield-alt';
+          adminBtn.title = 'Admin Girişi';
+        }
+      }
+    }
+
+    // Admin login fonksiyonu
+    async function loginAdmin(event) {
+      event.preventDefault();
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPassword').value;
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+        if (error) throw error;
+        // Admin kontrolü
+        await checkAdminStatus();
+        // Modalı kapat
+        const modal = bootstrap.Modal.getInstance(document.getElementById('adminLoginModal'));
+        if (modal) modal.hide();
+        alert('Başarıyla giriş yapıldı!');
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('Giriş yapılırken hata oluştu: ' + error.message);
+      }
+    }
+
+    // Ana sayfa için playlistleri göster
+    async function loadMainPlaylists() {
+      const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+      const container = document.getElementById('mainPlaylistContainer');
+      container.innerHTML = '';
+      
+      if (playlists.length === 0) {
+        container.innerHTML = '<div class="text-muted p-4">Henüz bir playlist eklenmedi.</div>';
+        return;
+      }
+      
+      for (let i = 0; i < playlists.length; i++) {
+        const playlist = playlists[i];
+        const item = document.createElement('div');
+        item.className = 'playlist-item';
+        
+        // Admin için düzenle/sil butonları
+        let adminButtons = '';
+        if (isAdmin) {
+          adminButtons = `
+            <div class="playlist-admin-actions">
+              <button class="btn btn-sm btn-outline-primary" onclick="editMainPlaylist(${i})" title="Düzenle">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteMainPlaylist(${i})" title="Sil">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          `;
+        }
+        
+        // Yorumları yükle
+        const comments = await loadPlaylistComments(i);
+        
+        item.innerHTML = `
+          ${adminButtons}
+          <div class="playlist-content">
+            <div class="playlist-item-header">
+              <div class="playlist-icon"><i class="fab fa-spotify"></i></div>
+              <div class="playlist-title">${playlist.title || 'Spotify Playlist'}</div>
+            </div>
+            <div class="playlist-description">${playlist.description || ''}</div>
+            <a href="${playlist.spotifyUrl}" class="spotify-link" target="_blank">
+              <i class="fab fa-spotify me-2"></i>Spotify'da Dinle
+            </a>
+          </div>
+          
+          <!-- Yorumlar Bölümü -->
+          <div class="playlist-comments mt-3">
+            <h6><i class="fas fa-comments me-2"></i>Yorumlar (${comments.length})</h6>
+            <div class="comments-list">
+              ${comments.map(comment => `
+                <div class="comment-item">
+                  <div class="comment-header">
+                    <strong>${comment.name}</strong>
+                    <small class="text-muted">${new Date(comment.created_at).toLocaleDateString('tr-TR')}</small>
+                  </div>
+                  <div class="comment-text">${comment.message}</div>
+                </div>
+              `).join('')}
+            </div>
+            
+            <!-- Yorum Ekleme Formu -->
+            <form class="comment-form mt-3" onsubmit="addPlaylistComment(event, ${i})">
+              <div class="row">
+                <div class="col-md-4">
+                  <input type="text" class="form-control" placeholder="Adınız" required>
+                </div>
+                <div class="col-md-8">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Yorumunuz..." required>
+                    <button class="btn btn-outline-secondary" type="submit">
+                      <i class="fas fa-paper-plane"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        `;
+        container.appendChild(item);
+      }
+    }
+
+    // Playlist yorumlarını yükle
+    async function loadPlaylistComments(playlistIndex) {
+      try {
+        const { data, error } = await supabaseClient
+          .from('playlist_comments')
+          .select('*')
+          .eq('playlist_index', playlistIndex)
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Yorumlar yüklenirken hata:', error);
+        return [];
+      }
+    }
+
+    // Playlist yorumu ekle
+    async function addPlaylistComment(event, playlistIndex) {
+      event.preventDefault();
+      
+      const form = event.target;
+      const nameInput = form.querySelector('input[type="text"]');
+      const messageInput = form.querySelector('input[placeholder="Yorumunuz..."]');
+      
+      const name = nameInput.value.trim();
+      const message = messageInput.value.trim();
+      
+      if (!name || !message) {
+        alert('Lütfen adınızı ve yorumunuzu girin.');
+        return;
+      }
+      
+      try {
+        const { error } = await supabaseClient
+          .from('playlist_comments')
+          .insert({
+            playlist_index: playlistIndex,
+            name: name,
+            message: message
+          });
+        
+        if (error) throw error;
+        
+        // Formu temizle
+        nameInput.value = '';
+        messageInput.value = '';
+        
+        // Playlistleri yeniden yükle
+        await loadMainPlaylists();
+        
+        alert('Yorumunuz başarıyla eklendi!');
+      } catch (error) {
+        console.error('Yorum eklenirken hata:', error);
+        alert('Yorum eklenirken hata oluştu.');
+      }
+    }
+
+    // Admin playlist işlemleri
+    function editMainPlaylist(index) {
+      const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+      const playlist = playlists[index];
+      
+      document.getElementById('mainPlaylistId').value = index;
+      document.getElementById('mainPlaylistTitle').value = playlist.title || '';
+      document.getElementById('mainPlaylistDescription').value = playlist.description || '';
+      document.getElementById('mainSpotifyUrl').value = playlist.spotifyUrl || '';
+      
+      document.getElementById('playlistFormSection').style.display = 'block';
+    }
+
+    function deleteMainPlaylist(index) {
+      if (confirm('Bu playlist\'i silmek istediğinizden emin misiniz?')) {
+        const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+        playlists.splice(index, 1);
+        localStorage.setItem('playlists', JSON.stringify(playlists));
+        loadMainPlaylists();
+        alert('Playlist başarıyla silindi!');
+      }
+    }
+
+    // Post yorumları için isim girmesi gereksin
+    async function addPostComment(postId, event) {
+      event.preventDefault();
+      
+      const form = event.target;
+      const nameInput = form.querySelector('input[placeholder="Adınız"]');
+      const commentInput = form.querySelector('input[placeholder="Yorumunuz..."]');
+      
+      const name = nameInput.value.trim();
+      const text = commentInput.value.trim();
+      
+      if (!name || !text) {
+        alert('Lütfen adınızı ve yorumunuzu girin.');
+        return;
+      }
+      
+      try {
+        await blogService.addComment(postId, { name, text });
+        
+        // Formu temizle
+        nameInput.value = '';
+        commentInput.value = '';
+        
+        // Postları yeniden yükle
+        loadPosts();
+        
+        alert('Yorumunuz başarıyla eklendi!');
+      } catch (error) {
+        console.error('Yorum eklenirken hata:', error);
+        alert('Yorum eklenirken hata oluştu.');
+      }
+    }
+
+    // Postları yükle ve yorum formlarını güncelle
+    async function loadPosts() {
+      try {
+        const posts = await blogService.getPosts();
+        const container = document.getElementById('postsContainer');
+        
+        if (posts.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-pen"></i>
+              <h4>Henüz yazı yok</h4>
+              <p>İlk yazıyı paylaşmak için admin girişi yapın.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = posts.map(post => `
+          <div class="post-card">
+            <div class="post-header">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h3 class="post-title">${post.title}</h3>
+                  <small class="text-muted">${new Date(post.created_at).toLocaleDateString('tr-TR')}</small>
+                </div>
+                ${isAdmin ? `
+                  <button class="btn btn-outline-danger btn-sm" onclick="deletePost(${post.id})" title="Yazıyı Sil">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+            <div class="post-content">${post.content}</div>
+            <div class="comments-section">
+              <h5 class="comments-title">
+                <i class="fas fa-comments"></i>
+                Yorumlar (${post.comments ? post.comments.length : 0})
+              </h5>
+              <div class="comments-list">
+                ${post.comments ? post.comments.map(comment => `
+                  <div class="comment-item">
+                    <div class="comment-header">
+                      <strong>${comment.name || 'Anonim'}</strong>
+                      <small class="text-muted">${comment.date}</small>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                  </div>
+                `).join('') : ''}
+              </div>
+              <form class="comment-form" onsubmit="addPostComment(${post.id}, event)">
+                <div class="row">
+                  <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Adınız" required>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder="Yorumunuz..." required>
+                      <button class="btn btn-outline-secondary" type="submit">
+                        <i class="fas fa-paper-plane"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Postlar yüklenirken hata:', error);
+      }
+    }
+
+    // Yazı silme fonksiyonu
+    async function deletePost(postId) {
+      if (!confirm('Bu yazıyı silmek istediğinizden emin misiniz?')) {
+        return;
+      }
+      
+      try {
+        const { error } = await supabaseClient
+          .from('posts')
+          .delete()
+          .eq('id', postId);
+        
+        if (error) throw error;
+        
+        alert('Yazı başarıyla silindi!');
+        loadPosts();
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Yazı silinirken hata oluştu: ' + error.message);
+      }
+    }
+
+    // Dark mode toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      // Mevcut tema durumunu kontrol et
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      
+      // İkonu güncelle
+      const icon = themeToggle.querySelector('i');
+      if (currentTheme === 'dark') {
+        icon.className = 'fas fa-sun';
+        themeToggle.title = 'Açık Moda Geç';
+      } else {
+        icon.className = 'fas fa-moon';
+        themeToggle.title = 'Karanlık Moda Geç';
+      }
+      
+      // Click event listener ekle
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        // Temayı değiştir
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        // Animasyon ekle
+        themeToggle.style.transform = 'rotate(360deg)';
+        setTimeout(() => {
+          themeToggle.style.transform = 'rotate(0deg)';
+        }, 300);
+        
+        // İkonu güncelle
+        const icon = themeToggle.querySelector('i');
+        if (newTheme === 'dark') {
+          icon.className = 'fas fa-sun';
+          themeToggle.title = 'Açık Moda Geç';
+        } else {
+          icon.className = 'fas fa-moon';
+          themeToggle.title = 'Karanlık Moda Geç';
+        }
+      });
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Sayfa yüklendiğinde mevcut tema durumunu kontrol et
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Dark mode toggle'ı güncelle
+      const themeToggle = document.getElementById('themeToggle');
+      if (themeToggle) {
+        const icon = themeToggle.querySelector('i');
+        if (savedTheme === 'dark') {
+          icon.className = 'fas fa-sun';
+          themeToggle.title = 'Açık Moda Geç';
+        } else {
+          icon.className = 'fas fa-moon';
+          themeToggle.title = 'Karanlık Moda Geç';
+        }
+      }
+      
+      checkAdminStatus();
+      loadMainPlaylists();
+      loadPosts();
+      
+      // Admin post form handler
+      const postForm = document.getElementById('postForm');
+      if (postForm) {
+        postForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const title = document.getElementById('postTitle').value.trim();
+          const content = document.getElementById('postContent').value.trim();
+          
+          if (!title || !content) {
+            alert('Lütfen başlık ve içerik alanlarını doldurun.');
+            return;
+          }
+          
+          try {
+            // Post'u ekle
+            await blogService.createPost({
+              title: title,
+              content: content
+            });
+            
+            // Formu temizle
+            postForm.reset();
+            
+            // Postları yeniden yükle
+            await loadPosts();
+            
+            // İstatistikleri güncelle
+            const totalPostsElement = document.getElementById('totalPosts');
+            if (totalPostsElement) {
+              const currentPosts = await blogService.getPosts();
+              totalPostsElement.textContent = currentPosts.length;
+            }
+            
+            alert('Yazınız başarıyla yayımlandı!');
+            
+          } catch (error) {
+            console.error('Post eklenirken hata:', error);
+            alert('Yazı eklenirken hata oluştu: ' + error.message);
+          }
+        });
+      }
+      
+      // Yeni playlist ekle butonu
+      const addPlaylistBtn = document.getElementById('addPlaylistBtn');
+      if (addPlaylistBtn) {
+        addPlaylistBtn.addEventListener('click', function() {
+          document.getElementById('mainPlaylistId').value = '';
+          document.getElementById('mainPlaylistTitle').value = '';
+          document.getElementById('mainPlaylistDescription').value = '';
+          document.getElementById('mainSpotifyUrl').value = '';
+          document.getElementById('playlistFormSection').style.display = 'block';
+        });
+      }
+      
+      // Playlist formu
+      const mainPlaylistForm = document.getElementById('mainPlaylistForm');
+      if (mainPlaylistForm) {
+        mainPlaylistForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const playlistId = document.getElementById('mainPlaylistId').value;
+          const title = document.getElementById('mainPlaylistTitle').value;
+          const description = document.getElementById('mainPlaylistDescription').value;
+          const spotifyUrl = document.getElementById('mainSpotifyUrl').value;
+          
+          const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+          const newPlaylist = { title, description, spotifyUrl };
+          
+          if (playlistId === '') {
+            playlists.push(newPlaylist);
+          } else {
+            playlists[parseInt(playlistId)] = newPlaylist;
+          }
+          
+          localStorage.setItem('playlists', JSON.stringify(playlists));
+          loadMainPlaylists();
+          
+          document.getElementById('playlistFormSection').style.display = 'none';
+          alert(playlistId === '' ? 'Playlist başarıyla eklendi!' : 'Playlist başarıyla güncellendi!');
+        });
+      }
+      
+      // İptal butonu
+      const cancelPlaylistFormBtn = document.getElementById('cancelPlaylistFormBtn');
+      if (cancelPlaylistFormBtn) {
+        cancelPlaylistFormBtn.addEventListener('click', function() {
+          document.getElementById('playlistFormSection').style.display = 'none';
+        });
+      }
+
+      // Admin login form submit
+      const adminLoginForm = document.getElementById('adminLoginForm');
+      if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', loginAdmin);
+      }
+    });
+  </script>
+</body>
+</html> 

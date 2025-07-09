@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hakkında - kısaveözkoca</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --bg-secondary: white;
+      --text-primary: #2c3e50;
+      --text-secondary: #555;
+      --text-light: #6c757d;
+      --border-color: #e9ecef;
+      --shadow: 0 10px 30px rgba(0,0,0,0.1);
+      --card-bg: white;
+      --navbar-bg: rgba(255, 255, 255, 0.95);
+      --hero-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      --bg-secondary: #0f0f23;
+      --text-primary: #ffffff;
+      --text-secondary: #e0e0e0;
+      --text-light: #b0b0b0;
+      --border-color: #2a2a3e;
+      --shadow: 0 10px 30px rgba(0,0,0,0.3);
+      --card-bg: #1a1a2e;
+      --navbar-bg: rgba(26, 26, 46, 0.95);
+      --hero-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-primary);
+      min-height: 100vh;
+      transition: all 0.3s ease;
+    }
+    
+    .navbar {
+      background: var(--navbar-bg) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #667eea !important;
+    }
+    
+    .navbar {
+      min-height: 70px;
+    }
+    
+    .navbar-nav {
+      align-items: center;
+    }
+    
+    .navbar-nav .nav-item {
+      margin: 0 5px;
+    }
+    
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .admin-toggle {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .admin-toggle:hover {
+      background: rgba(220, 53, 69, 0.1);
+      transform: scale(1.1);
+    }
+    
+    .admin-toggle.admin-active {
+      background: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      color: var(--text-primary) !important;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      padding: 8px 16px !important;
+      margin: 0 5px;
+    }
+    
+    .nav-link:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white !important;
+      transform: translateY(-2px);
+    }
+    
+    .nav-link.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white !important;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(102, 126, 234, 0.1);
+      transform: scale(1.1);
+    }
+    
+    .hero-section {
+      background: var(--hero-bg);
+      color: white;
+      padding: 80px 0;
+      margin-bottom: 40px;
+      border-radius: 0 0 30px 30px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+    
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+    
+    .about-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      border: none;
+      margin-bottom: 30px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .about-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .about-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .about-header h2 {
+      margin: 0;
+    }
+    
+    .form-label {
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .form-control {
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 15px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+    
+    .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+    
+    .btn {
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .about-content {
+      padding: 40px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+    
+    .feature-item {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+      border-left: 4px solid #667eea;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .feature-item {
+      background: #2a2a3e;
+    }
+    
+    .feature-item:hover {
+      transform: translateX(10px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      color: #667eea;
+      margin-bottom: 15px;
+    }
+
+    .feature-item h4 {
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .feature-item p {
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+    
+    .stats-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+    
+    .stat-label {
+      color: var(--text-light);
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .contact-info {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 15px;
+      padding: 25px;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .contact-info {
+      background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .contact-icon {
+      font-size: 1.5rem;
+      color: #667eea;
+      margin-right: 15px;
+      width: 40px;
+      text-align: center;
+    }
+
+    .contact-item strong {
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .contact-item small {
+      color: var(--text-light);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 30px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .role-card {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      border: 1px solid #ffeaa7;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .role-card {
+      background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+      border: 1px solid #667eea;
+    }
+    
+    .role-card.admin {
+      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+      border: 1px solid #c3e6cb;
+    }
+
+    [data-theme="dark"] .role-card.admin {
+      background: linear-gradient(135deg, #1a2e1a 0%, #0f230f 100%);
+      border: 1px solid #28a745;
+    }
+    
+    .role-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+    
+    .role-card.admin .role-icon {
+      color: #155724;
+    }
+
+    [data-theme="dark"] .role-card.admin .role-icon {
+      color: #28a745;
+    }
+    
+    .role-card.visitor .role-icon {
+      color: #856404;
+    }
+
+    [data-theme="dark"] .role-card.visitor .role-icon {
+      color: #667eea;
+    }
+
+    .role-card h4 {
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .role-card p {
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+
+    .text-white {
+      color: white !important;
+    }
+    
+    /* Kalem yazma animasyonu */
+    @keyframes writing {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-2px) rotate(-5deg);
+      }
+      50% {
+        transform: translateY(-1px) rotate(2deg);
+      }
+      75% {
+        transform: translateY(-3px) rotate(-3deg);
+      }
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+    }
+    
+    .writing-animation {
+      animation: writing 0.3s ease-in-out infinite;
+      transform-origin: center;
+    }
+    
+    /* Sosyal medya linkleri */
+    .social-links {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .social-link.linkedin {
+      background: linear-gradient(135deg, #0077b5 0%, #00a0dc 100%);
+      color: white;
+    }
+    
+    .social-link.linkedin:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 119, 181, 0.4);
+      color: white;
+    }
+    
+    .social-link i {
+      font-size: 1.2rem;
+    }
+    
+    .playlist-container {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .playlist-item {
+      background: var(--card-bg);
+      border-radius: 15px;
+      padding: 20px;
+      border: 2px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .playlist-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      border-color: #1DB954;
+    }
+    
+    .playlist-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .playlist-icon {
+      background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-right: 15px;
+    }
+    
+    .playlist-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    
+    .playlist-description {
+      color: var(--text-secondary);
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+    
+    .spotify-link {
+      background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      display: inline-flex;
+      align-items: center;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .spotify-link:hover {
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(29, 185, 84, 0.4);
+    }
+    
+    .playlist-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+    }
+    
+    .playlist-action-btn {
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #666;
+    }
+    
+    .playlist-action-btn:hover {
+      background: #fff;
+      color: #333;
+      transform: scale(1.1);
+    }
+    
+    .playlist-action-btn.edit {
+      color: #007bff;
+    }
+    
+    .playlist-action-btn.delete {
+      color: #dc3545;
+    }
+    
+    .playlist-action-btn.edit:hover {
+      background: #007bff;
+      color: white;
+    }
+    
+    .playlist-action-btn.delete:hover {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .playlist-item {
+      position: relative;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <i class="fas fa-pen me-2"></i>
+        kısaveözkoca
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">
+              <i class="fas fa-home me-1"></i>Ana Sayfa
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="about.html">
+              <i class="fas fa-user me-1"></i>Hakkında
+            </a>
+          </li>
+          <li class="nav-item">
+            <button class="theme-toggle" id="themeToggle" title="Karanlık Modu Aç/Kapat">
+              <i class="fas fa-moon"></i>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="admin-toggle" id="adminToggle" title="Admin Girişi">
+              <i class="fas fa-crown"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+
+  <div class="container" style="margin-top: 100px;">
+    <!-- About Story -->
+    <div class="about-card" id="hikaye-section">
+      <div class="about-header">
+        <h2><i class="fas fa-heart me-2"></i>Arkasındaki Hikaye</h2>
+        <button class="btn btn-outline-light btn-sm ms-auto" id="editHikayeBtn" style="display: none;" title="Düzenle">
+          <i class="fas fa-edit"></i>
+        </button>
+      </div>
+      <div class="about-content" id="hikayeContent">
+        <p><strong>kısaveözkoca</strong>'ya hoş geldiniz - fikirlerin paylaşılmayı ve kutlanmayı hak ettiği basit inancından doğan bir platform. Burası fikirlerimin , düşüncelerimin sizlere özgürce aktığı bir alan olarak tasarlnadı.</p>
+        
+        <p>Her fikir bir kıvılcımla başlar - bir netlik anı, ilham parıltısı veya peşinizi bırakmayan bir düşünce. Burası, o anları yakalamak veonlara bir yuva vermek için var.</p>
+      </div>
+      
+      <!-- Admin Edit Form (Hidden by default) -->
+      <div class="about-content" id="hikayeEditForm" style="display: none;">
+        <form id="hikayeForm">
+          <div class="mb-3">
+            <label for="hikayeText" class="form-label">
+              <i class="fas fa-align-left me-2"></i>Hikaye Metni
+            </label>
+            <textarea class="form-control" id="hikayeText" rows="6" placeholder="Blog'un hikayesini buraya yazın..." required></textarea>
+            <small class="form-text text-muted">**kalın** yazmak için **metin** formatını kullanabilirsiniz.</small>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i>Kaydet
+            </button>
+            <button type="button" class="btn btn-secondary" id="cancelHikayeEditBtn">
+              <i class="fas fa-times me-2"></i>İptal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Ben Kimim? -->
+    <div class="about-card" id="ben-kimim">
+      <div class="about-header">
+        <h2><i class="fas fa-user me-2"></i>Ben Kimim?</h2>
+        <button class="btn btn-outline-light btn-sm ms-auto" id="editAboutBtn" style="display: none;" title="Düzenle">
+          <i class="fas fa-edit"></i>
+        </button>
+      </div>
+      <div class="about-content" id="aboutContent">
+        <p><strong>Günaydın, ben Mustafa!</strong> Ermenek doğumluyum ve şu anda Boğaziçi Üniversitesi İktisat 3. sınıfım.</p>
+        
+        <div class="social-links mt-4">
+          <a href="#" class="social-link linkedin" title="LinkedIn Profilim">
+            <i class="fab fa-linkedin"></i>
+            <span>LinkedIn</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Admin Edit Form (Hidden by default) -->
+      <div class="about-content" id="aboutEditForm" style="display: none;">
+        <form id="aboutForm">
+          <div class="mb-3">
+            <label for="aboutText" class="form-label">
+              <i class="fas fa-align-left me-2"></i>Hakkımda Metni
+            </label>
+            <textarea class="form-control" id="aboutText" rows="6" placeholder="Kendiniz hakkında bilgi yazın..."></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="linkedinUrl" class="form-label">
+              <i class="fab fa-linkedin me-2"></i>LinkedIn URL
+            </label>
+            <input type="url" class="form-control" id="linkedinUrl" placeholder="https://linkedin.com/in/your-profile">
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i>Kaydet
+            </button>
+            <button type="button" class="btn btn-secondary" id="cancelEditBtn">
+              <i class="fas fa-times me-2"></i>İptal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mb-5">
+      <h3 class="text-white mb-4">Konuşmaya Katılmaya Hazır mısınız?</h3>
+      <a href="index.html" class="btn btn-primary btn-lg">
+        <i class="fas fa-comments me-2"></i>Şimdi Oku ve Yorum Yap
+      </a>
+    </div>
+  </div>
+
+  <!-- Admin Login Modal -->
+  <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="adminLoginModalLabel">
+            <i class="fas fa-crown me-2"></i>Admin Girişi
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="adminLoginForm">
+            <div class="mb-3">
+              <label for="adminEmail" class="form-label">
+                <i class="fas fa-envelope me-2"></i>E-posta
+              </label>
+              <input type="email" class="form-control" id="adminEmail" placeholder="admin@example.com" required>
+            </div>
+            <div class="mb-3">
+              <label for="adminPassword" class="form-label">
+                <i class="fas fa-key me-2"></i>Şifre
+              </label>
+              <input type="password" class="form-control" id="adminPassword" placeholder="Şifrenizi girin" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+  <script>
+    // About page functionality
+    let isAdmin = false;
+    
+    // Check if user is admin on page load
+    async function checkAdminStatus() {
+      try {
+        const supabaseClient = supabase.createClient(
+          'https://xdjyeicdaemdjqntdwsy.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
+        );
+        
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        
+        if (user) {
+          const { data: adminData, error: adminError } = await supabaseClient
+            .from('admin_users')
+            .select('is_admin')
+            .eq('id', user.id)
+            .single();
+          
+          if (!adminError && adminData && adminData.is_admin) {
+            isAdmin = true;
+            showAdminControls();
+          }
+        }
+      } catch (error) {
+        console.error('Admin check error:', error);
+      }
+    }
+    
+    // Show admin controls
+    function showAdminControls() {
+      const editAboutBtn = document.getElementById('editAboutBtn');
+      if (editAboutBtn) {
+        editAboutBtn.style.display = 'block';
+      }
+    }
+    
+    // Edit about functionality
+    const editAboutBtn = document.getElementById('editAboutBtn');
+    const aboutContent = document.getElementById('aboutContent');
+    const aboutEditForm = document.getElementById('aboutEditForm');
+    const aboutForm = document.getElementById('aboutForm');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    
+    // Edit hikaye functionality
+    const editHikayeBtn = document.getElementById('editHikayeBtn');
+    const hikayeContent = document.getElementById('hikayeContent');
+    const hikayeEditForm = document.getElementById('hikayeEditForm');
+    const hikayeForm = document.getElementById('hikayeForm');
+    const cancelHikayeEditBtn = document.getElementById('cancelHikayeEditBtn');
+    
+    if (editAboutBtn) {
+      editAboutBtn.addEventListener('click', function() {
+        // Load current content into form
+        const aboutText = aboutContent.querySelector('p').textContent;
+        const linkedinUrl = aboutContent.querySelector('.social-link').href;
+        
+        document.getElementById('aboutText').value = aboutText;
+        document.getElementById('linkedinUrl').value = linkedinUrl === '#' ? '' : linkedinUrl;
+        
+        // Show edit form, hide content
+        aboutContent.style.display = 'none';
+        aboutEditForm.style.display = 'block';
+        editAboutBtn.style.display = 'none';
+      });
+    }
+    
+    if (cancelEditBtn) {
+      cancelEditBtn.addEventListener('click', function() {
+        // Show content, hide edit form
+        aboutContent.style.display = 'block';
+        aboutEditForm.style.display = 'none';
+        editAboutBtn.style.display = 'block';
+      });
+    }
+    
+    if (aboutForm) {
+      aboutForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const aboutText = document.getElementById('aboutText').value;
+        const linkedinUrl = document.getElementById('linkedinUrl').value;
+        
+        try {
+          // Update content
+          aboutContent.querySelector('p').innerHTML = aboutText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          
+          const linkedinLink = aboutContent.querySelector('.social-link');
+          if (linkedinUrl) {
+            linkedinLink.href = linkedinUrl;
+          } else {
+            linkedinLink.href = '#';
+          }
+          
+          // Save to localStorage for persistence
+          localStorage.setItem('aboutText', aboutText);
+          localStorage.setItem('linkedinUrl', linkedinUrl);
+          
+          // Show content, hide edit form
+          aboutContent.style.display = 'block';
+          aboutEditForm.style.display = 'none';
+          editAboutBtn.style.display = 'block';
+          
+          alert('Hakkımda bölümü başarıyla güncellendi!');
+        } catch (error) {
+          console.error('Update error:', error);
+          alert('Güncelleme sırasında hata oluştu');
+        }
+      });
+    }
+    
+    // Hikaye düzenle butonu
+    if (editHikayeBtn) {
+      editHikayeBtn.addEventListener('click', function() {
+        // Mevcut hikayeyi forma doldur
+        const hikayeText = hikayeContent.innerHTML;
+        document.getElementById('hikayeText').value = hikayeText.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ');
+        
+        // Formu göster
+        hikayeContent.style.display = 'none';
+        hikayeEditForm.style.display = 'block';
+        editHikayeBtn.style.display = 'none';
+      });
+    }
+    
+    // Hikaye düzenleme iptal
+    if (cancelHikayeEditBtn) {
+      cancelHikayeEditBtn.addEventListener('click', function() {
+        // İçeriği göster, formu gizle
+        hikayeContent.style.display = 'block';
+        hikayeEditForm.style.display = 'none';
+        editHikayeBtn.style.display = 'block';
+      });
+    }
+    
+    // Hikaye formu submit
+    if (hikayeForm) {
+      hikayeForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const hikayeText = document.getElementById('hikayeText').value;
+        
+        try {
+          // İçeriği güncelle
+          hikayeContent.innerHTML = hikayeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+          
+          // localStorage'a kaydet
+          localStorage.setItem('hikayeText', hikayeText);
+          
+          // İçeriği göster, formu gizle
+          hikayeContent.style.display = 'block';
+          hikayeEditForm.style.display = 'none';
+          editHikayeBtn.style.display = 'block';
+          
+          alert('Hikaye bölümü başarıyla güncellendi!');
+        } catch (error) {
+          console.error('Update error:', error);
+          alert('Güncelleme sırasında hata oluştu');
+        }
+      });
+    }
+    
+    // Load saved content on page load
+    function loadSavedContent() {
+      const savedText = localStorage.getItem('aboutText');
+      const savedUrl = localStorage.getItem('linkedinUrl');
+      const savedHikayeText = localStorage.getItem('hikayeText');
+      
+      if (savedText) {
+        aboutContent.querySelector('p').innerHTML = savedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      }
+      
+      if (savedUrl && savedUrl !== '#') {
+        aboutContent.querySelector('.social-link').href = savedUrl;
+      }
+      
+      if (savedHikayeText) {
+        hikayeContent.innerHTML = savedHikayeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+      }
+    }
+    
+    // --- Multiple Playlist Admin/Edit Logic ---
+    // Removed playlist-related JS logic
+
+    // Admin kontrolüne playlist ve hikaye için de ekle
+    function showAdminControls() {
+      const editAboutBtn = document.getElementById('editAboutBtn');
+      const editHikayeBtn = document.getElementById('editHikayeBtn');
+      if (editAboutBtn) editAboutBtn.style.display = 'block';
+      if (editHikayeBtn) editHikayeBtn.style.display = 'block';
+    }
+
+    // Playlist düzenle butonu (ana buton)
+    // Removed playlist-related JS logic
+
+    // Yeni playlist ekle butonu
+    // Removed playlist-related JS logic
+
+    // Playlist düzenleme iptal
+    // Removed playlist-related JS logic
+
+    // Playlist formu submit
+    // Removed playlist-related JS logic
+
+    // Sayfa yüklenince playlist'leri göster
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAdminStatus(); // Admin kontrolünü sayfa yüklendiğinde çağır
+      loadSavedContent();
+      // Removed playlist loading
+    });
+    
+    // Dark mode functionality for About page
+    const themeToggle = document.getElementById('themeToggle');
+    
+    // Initialize theme from localStorage or default to light
+    let currentTheme = localStorage.getItem('blogTheme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    updateThemeIcon();
+    
+    // Theme toggle functionality
+    themeToggle.addEventListener('click', () => {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      localStorage.setItem('blogTheme', currentTheme);
+      updateThemeIcon();
+      
+      // Add animation effect
+      themeToggle.style.transform = 'rotate(360deg)';
+      setTimeout(() => {
+        themeToggle.style.transform = 'rotate(0deg)';
+      }, 300);
+    });
+    
+    function updateThemeIcon() {
+      const icon = themeToggle.querySelector('i');
+      if (currentTheme === 'dark') {
+        icon.className = 'fas fa-sun';
+        themeToggle.title = 'Açık Moda Geç';
+      } else {
+        icon.className = 'fas fa-moon';
+        themeToggle.title = 'Karanlık Moda Geç';
+      }
+    }
+  </script>
+</body>
+</html> 
