@@ -1454,6 +1454,12 @@
         const posts = await blogService.getPosts();
         const container = document.getElementById('postsContainer');
         
+        // Toplam yazı sayısını güncelle
+        const totalPostsElement = document.getElementById('totalPosts');
+        if (totalPostsElement) {
+          totalPostsElement.textContent = posts.length;
+        }
+        
         if (posts.length === 0) {
           container.innerHTML = `
             <div class="empty-state">
@@ -1541,7 +1547,10 @@
         if (error) throw error;
         
         alert('Yazı başarıyla silindi!');
-        loadPosts();
+        
+        // Postları yeniden yükle (bu zaten toplam sayıyı güncelleyecek)
+        await loadPosts();
+        
       } catch (error) {
         console.error('Delete error:', error);
         alert('Yazı silinirken hata oluştu: ' + error.message);
