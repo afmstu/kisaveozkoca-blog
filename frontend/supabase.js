@@ -163,6 +163,33 @@ const blogService = {
     return await this.updatePost(postId, { comments })
   },
 
+  // Yorum sil (admin için)
+  async deleteComment(postId, commentId) {
+    const post = await this.getPost(postId)
+    const comments = post.comments || []
+    
+    // Yorumu bul ve sil
+    const filteredComments = comments.filter(comment => comment.id !== commentId)
+    
+    return await this.updatePost(postId, { comments: filteredComments })
+  },
+
+  // Yanıt sil (admin için)
+  async deleteReply(postId, commentId, replyId) {
+    const post = await this.getPost(postId)
+    const comments = post.comments || []
+    
+    // Yorumu bul
+    const commentIndex = comments.findIndex(comment => comment.id === commentId)
+    if (commentIndex !== -1) {
+      // Yanıtı sil
+      const filteredReplies = comments[commentIndex].replies.filter(reply => reply.id !== replyId)
+      comments[commentIndex].replies = filteredReplies
+    }
+    
+    return await this.updatePost(postId, { comments })
+  },
+
   // Tek yazı getir
   async getPost(id) {
     const { data, error } = await window.supabaseClient

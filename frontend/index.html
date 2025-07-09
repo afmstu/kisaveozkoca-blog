@@ -1423,6 +1423,56 @@
       }
     }
 
+    // Yorum sil (admin için)
+    async function deleteComment(postId, commentId) {
+      // Admin kontrolü
+      if (!window.isAdmin) {
+        alert('Bu işlem için admin yetkisi gereklidir!');
+        return;
+      }
+      
+      if (!confirm('Bu yorumu silmek istediğinizden emin misiniz?')) {
+        return;
+      }
+      
+      try {
+        await blogService.deleteComment(postId, commentId);
+        
+        // Postları yeniden yükle
+        loadPosts();
+        
+        alert('Yorum başarıyla silindi!');
+      } catch (error) {
+        console.error('Yorum silinirken hata:', error);
+        alert('Yorum silinirken hata oluştu: ' + error.message);
+      }
+    }
+
+    // Yanıt sil (admin için)
+    async function deleteReply(postId, commentId, replyId) {
+      // Admin kontrolü
+      if (!window.isAdmin) {
+        alert('Bu işlem için admin yetkisi gereklidir!');
+        return;
+      }
+      
+      if (!confirm('Bu yanıtı silmek istediğinizden emin misiniz?')) {
+        return;
+      }
+      
+      try {
+        await blogService.deleteReply(postId, commentId, replyId);
+        
+        // Postları yeniden yükle
+        loadPosts();
+        
+        alert('Yanıt başarıyla silindi!');
+      } catch (error) {
+        console.error('Yanıt silinirken hata:', error);
+        alert('Yanıt silinirken hata oluştu: ' + error.message);
+      }
+    }
+
     // Yanıt ekle
     async function addReply(postId, commentId, event) {
       event.preventDefault();
@@ -1577,6 +1627,11 @@
                       <button class="btn btn-link btn-sm reply-btn" onclick="toggleReplyForm(${post.id}, ${comment.id})">
                         <i class="fas fa-reply"></i> Yanıtla
                       </button>
+                      ${isAdmin ? `
+                        <button class="btn btn-link btn-sm delete-btn" onclick="deleteComment(${post.id}, ${comment.id})" title="Yorumu Sil">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      ` : ''}
                     </div>
                     
                     <!-- Yanıt formu -->
@@ -1606,6 +1661,11 @@
                             <div class="reply-header">
                               <strong>${reply.name || 'Anonim'}</strong>
                               <small class="text-muted">${reply.date}</small>
+                              ${isAdmin ? `
+                                <button class="btn btn-link btn-sm delete-btn" onclick="deleteReply(${post.id}, ${comment.id}, ${reply.id})" title="Yanıtı Sil">
+                                  <i class="fas fa-trash"></i>
+                                </button>
+                              ` : ''}
                             </div>
                             <div class="reply-text">${reply.text}</div>
                           </div>
@@ -1848,6 +1908,19 @@
     .reply-btn:hover {
       color: #667eea;
       background-color: rgba(102, 126, 234, 0.1);
+      border-radius: 4px;
+    }
+    
+    .delete-btn {
+      color: #dc3545;
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      text-decoration: none;
+    }
+    
+    .delete-btn:hover {
+      color: #c82333;
+      background-color: rgba(220, 53, 69, 0.1);
       border-radius: 4px;
     }
     
