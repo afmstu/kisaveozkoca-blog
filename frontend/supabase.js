@@ -133,6 +133,36 @@ const blogService = {
     return await this.updatePost(postId, { comments })
   },
 
+  // Yanıt ekle
+  async addReply(postId, commentId, replyData) {
+    const post = await this.getPost(postId)
+    const comments = post.comments || []
+    
+    // Yorumu bul ve yanıt ekle
+    const commentIndex = comments.findIndex(comment => comment.id === commentId)
+    if (commentIndex !== -1) {
+      if (!comments[commentIndex].replies) {
+        comments[commentIndex].replies = []
+      }
+      
+      comments[commentIndex].replies.push({
+        id: Date.now(),
+        name: replyData.name,
+        text: replyData.text,
+        timestamp: new Date().toISOString(),
+        date: new Date().toLocaleDateString('tr-TR', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      })
+    }
+    
+    return await this.updatePost(postId, { comments })
+  },
+
   // Tek yazı getir
   async getPost(id) {
     const { data, error } = await window.supabaseClient

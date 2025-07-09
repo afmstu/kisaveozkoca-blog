@@ -1415,6 +1415,48 @@
       }
     }
 
+    // Yanıt formunu göster/gizle
+    function toggleReplyForm(postId, commentId) {
+      const replyForm = document.getElementById(`replyForm-${postId}-${commentId}`);
+      if (replyForm) {
+        replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    // Yanıt ekle
+    async function addReply(postId, commentId, event) {
+      event.preventDefault();
+      
+      const form = event.target;
+      const nameInput = form.querySelector('input[placeholder="Adınız"]');
+      const replyInput = form.querySelector('input[placeholder="Yanıtınız..."]');
+      
+      const name = nameInput.value.trim();
+      const text = replyInput.value.trim();
+      
+      if (!name || !text) {
+        alert('Lütfen adınızı ve yanıtınızı girin.');
+        return;
+      }
+      
+      try {
+        await blogService.addReply(postId, commentId, { name, text });
+        
+        // Formu temizle ve gizle
+        nameInput.value = '';
+        replyInput.value = '';
+        form.parentElement.style.display = 'none';
+        
+        // Postları yeniden yükle
+        loadPosts();
+        
+        alert('Yanıtınız başarıyla eklendi!');
+      } catch (error) {
+        console.error('Yanıt eklenirken hata:', error);
+        alert('Yanıt eklenirken hata oluştu.');
+      }
+    }
+
     // Post yorumları için isim girmesi gereksin
     async function addPostComment(postId, event) {
       event.preventDefault();
@@ -1529,6 +1571,47 @@
                       <small class="text-muted">${comment.date}</small>
                     </div>
                     <div class="comment-text">${comment.text}</div>
+                    
+                    <!-- Yanıt butonu -->
+                    <div class="comment-actions">
+                      <button class="btn btn-link btn-sm reply-btn" onclick="toggleReplyForm(${post.id}, ${comment.id})">
+                        <i class="fas fa-reply"></i> Yanıtla
+                      </button>
+                    </div>
+                    
+                    <!-- Yanıt formu -->
+                    <div class="reply-form" id="replyForm-${post.id}-${comment.id}" style="display: none;">
+                      <form onsubmit="addReply(${post.id}, ${comment.id}, event)">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Adınız" required>
+                          </div>
+                          <div class="col-md-8">
+                            <div class="input-group">
+                              <input type="text" class="form-control" placeholder="Yanıtınız..." required>
+                              <button class="btn btn-outline-secondary" type="submit">
+                                <i class="fas fa-paper-plane"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                    
+                    <!-- Yanıtlar -->
+                    ${comment.replies && comment.replies.length > 0 ? `
+                      <div class="replies-section">
+                        ${comment.replies.map(reply => `
+                          <div class="reply-item">
+                            <div class="reply-header">
+                              <strong>${reply.name || 'Anonim'}</strong>
+                              <small class="text-muted">${reply.date}</small>
+                            </div>
+                            <div class="reply-text">${reply.text}</div>
+                          </div>
+                        `).join('')}
+                      </div>
+                    ` : ''}
                   </div>
                 `).join('') : ''}
               </div>
@@ -1748,5 +1831,78 @@
       }
     });
   </script>
+  
+  <style>
+    /* Yanıt stilleri */
+    .comment-actions {
+      margin-top: 8px;
+    }
+    
+    .reply-btn {
+      color: var(--text-light);
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      text-decoration: none;
+    }
+    
+    .reply-btn:hover {
+      color: #667eea;
+      background-color: rgba(102, 126, 234, 0.1);
+      border-radius: 4px;
+    }
+    
+    .reply-form {
+      margin-top: 12px;
+      padding: 12px;
+      background-color: rgba(102, 126, 234, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid #667eea;
+    }
+    
+    .replies-section {
+      margin-top: 12px;
+      margin-left: 20px;
+      padding-left: 15px;
+      border-left: 2px solid var(--border-color);
+    }
+    
+    .reply-item {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background-color: rgba(102, 126, 234, 0.03);
+      border-radius: 6px;
+    }
+    
+    .reply-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    
+    .reply-header strong {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    
+    .reply-header small {
+      font-size: 0.75rem;
+    }
+    
+    .reply-text {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    
+    /* Dark mode için yanıt stilleri */
+    [data-theme="dark"] .reply-form {
+      background-color: rgba(102, 126, 234, 0.1);
+    }
+    
+    [data-theme="dark"] .reply-item {
+      background-color: rgba(102, 126, 234, 0.05);
+    }
+  </style>
 </body>
 </html> 
