@@ -1199,6 +1199,83 @@
           throw error
         }
         return data[0]
+      },
+
+      async addReply(postId, commentId, replyData) {
+        const post = await this.getPost(postId);
+        if (!post) {
+          throw new Error('Post not found');
+        }
+
+        const comments = post.comments || [];
+        const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId));
+
+        if (commentIndex === -1) {
+          throw new Error('Comment not found');
+        }
+
+        if (!comments[commentIndex].replies) {
+          comments[commentIndex].replies = [];
+        }
+
+        comments[commentIndex].replies.push({
+          id: Date.now(),
+          name: replyData.name,
+          text: replyData.text,
+          timestamp: new Date().toISOString(),
+          date: new Date().toLocaleDateString('tr-TR', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        });
+
+        return await this.updatePost(postId, { comments });
+      },
+
+      async deleteComment(postId, commentId) {
+        const post = await this.getPost(postId);
+        if (!post) {
+          throw new Error('Post not found');
+        }
+
+        const comments = post.comments || [];
+        const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId));
+
+        if (commentIndex === -1) {
+          throw new Error('Comment not found');
+        }
+
+        comments.splice(commentIndex, 1);
+
+        return await this.updatePost(postId, { comments });
+      },
+
+      async deleteReply(postId, commentId, replyId) {
+        const post = await this.getPost(postId);
+        if (!post) {
+          throw new Error('Post not found');
+        }
+
+        const comments = post.comments || [];
+        const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId));
+
+        if (commentIndex === -1) {
+          throw new Error('Comment not found');
+        }
+
+        const replies = comments[commentIndex].replies || [];
+        const replyIndex = replies.findIndex(reply => String(reply.id) === String(replyId));
+
+        if (replyIndex === -1) {
+          throw new Error('Reply not found');
+        }
+
+        replies.splice(replyIndex, 1);
+
+        return await this.updatePost(postId, { comments });
       }
     };
 
@@ -1493,48 +1570,28 @@
     }
 
     // Yanıt ekle
-    async function addReply(postId, commentId, replyData) {
-      let post = await this.getPost(postId)
-      let comments = post.comments || []
-      let updated = false;
-      // Eski yorumlarda id yoksa otomatik ata
-      comments.forEach(comment => {
-        if (!comment.id) {
-          comment.id = Date.now() + Math.floor(Math.random() * 1000000); // Benzersiz id
-          updated = true;
-        }
-      });
-      if (updated) {
-        // Yorumlara id eklediysek, postu güncelle
-        await this.updatePost(postId, { comments });
-        // Güncel comments'i tekrar çek
-        post = await this.getPost(postId)
-        comments = post.comments || []
+    async function addReply(postId, commentId, event) {
+      event.preventDefault();
+      const form = event.target;
+      const nameInput = form.querySelector('input[placeholder="Adınız"]');
+      const replyInput = form.querySelector('textarea[placeholder="Yanıtınız..."]');
+      const name = nameInput.value.trim();
+      const text = replyInput.value.trim();
+      if (!name || !text) {
+        alert('Lütfen adınızı ve yanıtınızı girin.');
+        return;
       }
-      // Yorumu bul ve yanıt ekle
-      const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId))
-      if (commentIndex !== -1) {
-        if (!comments[commentIndex].replies) {
-          comments[commentIndex].replies = []
-        }
-        comments[commentIndex].replies.push({
-          id: Date.now(),
-          name: replyData.name,
-          text: replyData.text,
-          timestamp: new Date().toISOString(),
-          date: new Date().toLocaleDateString('tr-TR', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        })
-      } else {
-        console.error('Yanıt eklenecek yorum bulunamadı! postId:', postId, 'commentId:', commentId, 'comments:', comments)
-        throw new Error('Yanıt eklenecek yorum bulunamadı!')
+      try {
+        await blogService.addReply(postId, commentId, { name, text });
+        nameInput.value = '';
+        replyInput.value = '';
+        form.parentElement.style.display = 'none';
+        loadPosts();
+        alert('Yanıtınız başarıyla eklendi!');
+      } catch (error) {
+        console.error('Yanıt eklenirken hata:', error);
+        alert('Yanıt eklenirken hata oluştu.');
       }
-      return await this.updatePost(postId, { comments })
     }
 
     // Post yorumları için isim girmesi gereksin
