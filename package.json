@@ -8,10 +8,17 @@
     "build": "echo 'Static site - no build needed'",
     "dev": "npx http-server frontend -p 3000"
   },
-  "keywords": ["blog", "personal", "turkish"],
+  "keywords": [
+    "blog",
+    "personal",
+    "turkish"
+  ],
   "author": "Mustafa Özkoca",
   "license": "MIT",
   "devDependencies": {
     "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.4"
   }
-} 
+}
