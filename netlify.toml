@@ -10,15 +10,14 @@
   to = "/index.html"
   status = 200
 
-[headers]
+[[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin" 
+    Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Performans için cache ve sıkıştırma ayarları
 [[headers]]
   for = "/frontend/*.js"
   [headers.values]
