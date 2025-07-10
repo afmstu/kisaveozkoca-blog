@@ -1,16 +1,10 @@
 // Debug: Check if script is loading
-console.log('app.js is loading...');
-
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM is ready');
   
   // Get DOM elements
   const adminToggle = document.getElementById('adminToggle');
   const adminLoginModal = document.getElementById('adminLoginModal');
-  
-  console.log('Admin toggle found:', !!adminToggle);
-  console.log('Admin modal found:', !!adminLoginModal);
   
   // Check if Supabase is loaded
   if (typeof supabase === 'undefined') {
@@ -19,15 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  console.log('Supabase is loaded:', supabase);
-  
   // Create Supabase client
   const supabaseClient = supabase.createClient(
     'https://xdjyeicdaemdjqntdwsy.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
   );
-  
-  console.log('Supabase client created:', supabaseClient);
   
   // Admin state
   let isAdmin = false;
@@ -36,19 +26,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Simple test - add click handler to admin button
   if (adminToggle) {
     adminToggle.addEventListener('click', function() {
-      console.log('Admin button clicked!');
       
       if (isAdmin) {
         // Logout
-        console.log('Admin logout');
         signOut();
       } else {
         // Show login modal
-        console.log('Show login modal');
         
         // Try to show modal
         if (adminLoginModal) {
-          console.log('Attempting to show modal...');
           
           // Show modal manually (more reliable)
           adminLoginModal.style.display = 'block';
@@ -81,7 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
           }
           
-          console.log('Modal should be visible now');
         }
       }
       
@@ -99,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    console.log('Click handler added to admin button');
   } else {
     console.error('Admin toggle button not found!');
   }
@@ -109,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (adminLoginForm) {
     adminLoginForm.addEventListener('submit', async function(e) {
       e.preventDefault();
-      console.log('Admin login form submitted');
       
       const email = document.getElementById('adminEmail').value;
       const password = document.getElementById('adminPassword').value;
@@ -128,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (data.user) {
-          console.log('User logged in:', data.user);
           
           // Check if user is admin
           const { data: adminData, error: adminError } = await supabaseClient
@@ -144,7 +126,6 @@ document.addEventListener('DOMContentLoaded', function() {
           }
           
           if (adminData && adminData.is_admin) {
-            console.log('User is admin');
             isAdmin = true;
             window.isAdmin = true; // Global erişim için
             updateAdminUI();
@@ -152,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
             adminLoginForm.reset();
             alert('Admin girişi başarılı!');
           } else {
-            console.log('User is not admin');
             alert('Bu kullanıcının admin yetkisi yok!');
             await supabaseClient.auth.signOut();
           }
@@ -169,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    console.log('Admin login form handler added');
   }
   
   // Check authentication status
@@ -178,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
       const { data: { user } } = await supabaseClient.auth.getUser();
       
       if (user) {
-        console.log('User is logged in:', user);
         
         // Check if user is admin
         const { data: adminData, error: adminError } = await supabaseClient
@@ -188,7 +166,6 @@ document.addEventListener('DOMContentLoaded', function() {
           .single();
         
         if (!adminError && adminData && adminData.is_admin) {
-          console.log('User is admin');
           isAdmin = true;
           window.isAdmin = true; // Global erişim için
           updateAdminUI();
@@ -210,7 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      console.log('User signed out');
       isAdmin = false;
       window.isAdmin = false; // Global erişim için
       updateAdminUI();
