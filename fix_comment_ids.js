@@ -1,11 +1,11 @@
 // Supabase'deki tüm postların comments alanındaki yorumlara ve yanıtlara id ekler
-// ÇALIŞTIRMADAN ÖNCE: 'YOUR_SERVICE_ROLE_KEY' kısmını kendi Supabase Service Role Key'in ile değiştir!
+// ÇALIŞTIRMADAN ÖNCE: Service Role Key'inizi kimseyle paylaşmayın!
 
 const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(
   'https://xdjyeicdaemdjqntdwsy.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTczMDI0OSwiZXhwIjoyMDY3MzA2MjQ5fQ.IphmemBenHmFzTcxun0_H7b3kLQ7rF51fJTgcOf1aEQ' // Service Role Key kullan! (asla client/public anahtarını kullanma)
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTczMDI0OSwiZXhwIjoyMDY3MzA2MjQ5fQ.IphmemBenHmFzTcxun0_H7b3kLQ7rF51fJTgcOf1aEQ' // Service Role Key (gizli tutun!)
 );
 
 async function fixCommentIds() {
