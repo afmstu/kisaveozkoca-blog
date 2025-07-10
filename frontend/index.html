@@ -1202,6 +1202,65 @@
       }
     };
 
+    // Playlist service functions
+    const playlistService = {
+      async getPlaylists() {
+        const { data, error } = await supabaseClient
+          .from('playlists')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (error) {
+          console.error('Playlistler getirilirken hata:', error);
+          return [];
+        }
+        return data || [];
+      },
+      
+      async createPlaylist(playlist) {
+        const { data, error } = await supabaseClient
+          .from('playlists')
+          .insert([{
+            title: playlist.title,
+            description: playlist.description,
+            spotify_url: playlist.spotify_url
+          }])
+          .select()
+        
+        if (error) {
+          console.error('Playlist eklenirken hata:', error);
+          throw error;
+        }
+        return data[0];
+      },
+      
+      async updatePlaylist(id, updates) {
+        const { data, error } = await supabaseClient
+          .from('playlists')
+          .update(updates)
+          .eq('id', id)
+          .select()
+        
+        if (error) {
+          console.error('Playlist güncellenirken hata:', error);
+          throw error;
+        }
+        return data[0];
+      },
+      
+      async deletePlaylist(id) {
+        const { error } = await supabaseClient
+          .from('playlists')
+          .delete()
+          .eq('id', id);
+        
+        if (error) {
+          console.error('Playlist silinirken hata:', error);
+          throw error;
+        }
+      }
+    };
+
     // Admin kontrolü
     async function checkAdminStatus() {
       try {
@@ -1227,6 +1286,7 @@
       }
       updateAdminUI();
       loadPosts();
+      loadMainPlaylists(); // Playlistleri de yükle
     }
 
     // Admin UI'ını güncelle
@@ -1279,166 +1339,98 @@
 
     // Ana sayfa için playlistleri göster
     async function loadMainPlaylists() {
-      const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-      const container = document.getElementById('mainPlaylistContainer');
-      container.innerHTML = '';
-      
-      if (playlists.length === 0) {
-        container.innerHTML = '<div class="text-muted p-4">Henüz bir playlist eklenmedi.</div>';
-        return;
-      }
-      
-      for (let i = 0; i < playlists.length; i++) {
-        const playlist = playlists[i];
-        const item = document.createElement('div');
-        item.className = 'playlist-item';
+      try {
+        const playlists = await playlistService.getPlaylists();
+        const container = document.getElementById('mainPlaylistContainer');
+        container.innerHTML = '';
         
-        // Admin için düzenle/sil butonları
-        let adminButtons = '';
-        if (isAdmin) {
-          adminButtons = `
-            <div class="playlist-admin-actions">
-              <button class="btn btn-sm btn-outline-primary" onclick="editMainPlaylist(${i})" title="Düzenle">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger" onclick="deleteMainPlaylist(${i})" title="Sil">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          `;
+        if (playlists.length === 0) {
+          container.innerHTML = '<div class="text-muted p-4">Henüz bir playlist eklenmedi.</div>';
+          return;
         }
         
-        // Yorumları yükle
-        const comments = await loadPlaylistComments(i);
-        
-        item.innerHTML = `
-          ${adminButtons}
-          <div class="playlist-content">
-            <div class="playlist-item-header">
-              <div class="playlist-icon"><i class="fab fa-spotify"></i></div>
-              <div class="playlist-title">${playlist.title || 'Spotify Playlist'}</div>
-            </div>
-            <div class="playlist-description">${playlist.description || ''}</div>
-            <a href="${playlist.spotifyUrl}" class="spotify-link" target="_blank">
-              <i class="fab fa-spotify me-2"></i>Spotify'da Dinle
-            </a>
-          </div>
+        for (let i = 0; i < playlists.length; i++) {
+          const playlist = playlists[i];
+          const item = document.createElement('div');
+          item.className = 'playlist-item';
           
-          <!-- Yorumlar Bölümü -->
-          <div class="playlist-comments mt-3">
-            <h6><i class="fas fa-comments me-2"></i>Yorumlar (${comments.length})</h6>
-            <div class="comments-list">
-              ${comments.map(comment => `
-                <div class="comment-item">
-                  <div class="comment-header">
-                    <strong>${comment.name}</strong>
-                    <small class="text-muted">${new Date(comment.created_at).toLocaleDateString('tr-TR')}</small>
-                  </div>
-                  <div class="comment-text">${comment.message}</div>
-                </div>
-              `).join('')}
-            </div>
-            
-            <!-- Yorum Ekleme Formu -->
-            <form class="comment-form mt-3" onsubmit="addPlaylistComment(event, ${i})">
-              <div class="row">
-                <div class="col-md-4">
-                  <input type="text" class="form-control" placeholder="Adınız" required>
-                </div>
-                <div class="col-md-8">
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Yorumunuz..." required>
-                    <button class="btn btn-outline-secondary" type="submit">
-                      <i class="fas fa-paper-plane"></i>
-                    </button>
-                  </div>
-                </div>
+          // Admin için düzenle/sil butonları
+          let adminButtons = '';
+          if (isAdmin) {
+            adminButtons = `
+              <div class="playlist-admin-actions">
+                <button class="btn btn-sm btn-outline-primary" onclick="editMainPlaylist(${playlist.id})" title="Düzenle">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteMainPlaylist(${playlist.id})" title="Sil">
+                  <i class="fas fa-trash"></i>
+                </button>
               </div>
-            </form>
-          </div>
-        `;
-        container.appendChild(item);
-      }
-    }
-
-    // Playlist yorumlarını yükle
-    async function loadPlaylistComments(playlistIndex) {
-      try {
-        const { data, error } = await supabaseClient
-          .from('playlist_comments')
-          .select('*')
-          .eq('playlist_index', playlistIndex)
-          .order('created_at', { ascending: false });
-        
-        if (error) throw error;
-        return data || [];
+            `;
+          }
+          
+          item.innerHTML = `
+            ${adminButtons}
+            <div class="playlist-content">
+              <div class="playlist-item-header">
+                <div class="playlist-icon"><i class="fab fa-spotify"></i></div>
+                <div class="playlist-title">${playlist.title || 'Spotify Playlist'}</div>
+              </div>
+              <div class="playlist-description">${playlist.description || ''}</div>
+              <a href="${playlist.spotify_url}" class="spotify-link" target="_blank">
+                <i class="fab fa-spotify me-2"></i>Spotify'da Dinle
+              </a>
+            </div>
+          `;
+          container.appendChild(item);
+        }
       } catch (error) {
-        console.error('Yorumlar yüklenirken hata:', error);
-        return [];
+        console.error('Playlistler yüklenirken hata:', error);
+        const container = document.getElementById('mainPlaylistContainer');
+        container.innerHTML = '<div class="text-danger p-4">Playlistler yüklenirken hata oluştu.</div>';
       }
     }
 
-    // Playlist yorumu ekle
-    async function addPlaylistComment(event, playlistIndex) {
-      event.preventDefault();
-      
-      const form = event.target;
-      const nameInput = form.querySelector('input[type="text"]');
-      const messageInput = form.querySelector('input[placeholder="Yorumunuz..."]');
-      
-      const name = nameInput.value.trim();
-      const message = messageInput.value.trim();
-      
-      if (!name || !message) {
-        alert('Lütfen adınızı ve yorumunuzu girin.');
+
+
+    // Admin playlist işlemleri
+    async function editMainPlaylist(playlistId) {
+      try {
+        const playlists = await playlistService.getPlaylists();
+        const playlist = playlists.find(p => p.id === parseInt(playlistId));
+        
+        if (!playlist) {
+          alert('Playlist bulunamadı!');
+          return;
+        }
+        
+        document.getElementById('mainPlaylistId').value = playlist.id;
+        document.getElementById('mainPlaylistTitle').value = playlist.title || '';
+        document.getElementById('mainPlaylistDescription').value = playlist.description || '';
+        document.getElementById('mainSpotifyUrl').value = playlist.spotify_url || '';
+        
+        document.getElementById('playlistFormSection').style.display = 'block';
+      } catch (error) {
+        console.error('Playlist düzenleme hatası:', error);
+        alert('Playlist düzenlenirken hata oluştu: ' + error.message);
+      }
+    }
+
+    async function deleteMainPlaylist(playlistId) {
+      if (!window.isAdmin) {
+        alert('Bu işlem için admin yetkisi gereklidir!');
         return;
       }
       
-      try {
-        const { error } = await supabaseClient
-          .from('playlist_comments')
-          .insert({
-            playlist_index: playlistIndex,
-            name: name,
-            message: message
-          });
-        
-        if (error) throw error;
-        
-        // Formu temizle
-        nameInput.value = '';
-        messageInput.value = '';
-        
-        // Playlistleri yeniden yükle
-        await loadMainPlaylists();
-        
-        alert('Yorumunuz başarıyla eklendi!');
-      } catch (error) {
-        console.error('Yorum eklenirken hata:', error);
-        alert('Yorum eklenirken hata oluştu.');
-      }
-    }
-
-    // Admin playlist işlemleri
-    function editMainPlaylist(index) {
-      const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-      const playlist = playlists[index];
-      
-      document.getElementById('mainPlaylistId').value = index;
-      document.getElementById('mainPlaylistTitle').value = playlist.title || '';
-      document.getElementById('mainPlaylistDescription').value = playlist.description || '';
-      document.getElementById('mainSpotifyUrl').value = playlist.spotifyUrl || '';
-      
-      document.getElementById('playlistFormSection').style.display = 'block';
-    }
-
-    function deleteMainPlaylist(index) {
       if (confirm('Bu playlist\'i silmek istediğinizden emin misiniz?')) {
-        const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-        playlists.splice(index, 1);
-        localStorage.setItem('playlists', JSON.stringify(playlists));
-        loadMainPlaylists();
-        alert('Playlist başarıyla silindi!');
+        try {
+          await playlistService.deletePlaylist(playlistId);
+          await loadMainPlaylists();
+          alert('Playlist başarıyla silindi!');
+        } catch (error) {
+          console.error('Playlist silme hatası:', error);
+          alert('Playlist silinirken hata oluştu: ' + error.message);
+        }
       }
     }
 
@@ -1883,28 +1875,49 @@
       // Playlist formu
       const mainPlaylistForm = document.getElementById('mainPlaylistForm');
       if (mainPlaylistForm) {
-        mainPlaylistForm.addEventListener('submit', function(e) {
+        mainPlaylistForm.addEventListener('submit', async function(e) {
           e.preventDefault();
+          
+          // Admin kontrolü
+          if (!window.isAdmin) {
+            alert('Sadece admin kullanıcılar playlist ekleyebilir!');
+            return;
+          }
           
           const playlistId = document.getElementById('mainPlaylistId').value;
           const title = document.getElementById('mainPlaylistTitle').value;
           const description = document.getElementById('mainPlaylistDescription').value;
           const spotifyUrl = document.getElementById('mainSpotifyUrl').value;
           
-          const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-          const newPlaylist = { title, description, spotifyUrl };
-          
-          if (playlistId === '') {
-            playlists.push(newPlaylist);
-          } else {
-            playlists[parseInt(playlistId)] = newPlaylist;
+          try {
+            if (playlistId === '') {
+              // Yeni playlist ekle
+              await playlistService.createPlaylist({
+                title: title,
+                description: description,
+                spotify_url: spotifyUrl
+              });
+            } else {
+              // Mevcut playlist'i güncelle
+              await playlistService.updatePlaylist(playlistId, {
+                title: title,
+                description: description,
+                spotify_url: spotifyUrl
+              });
+            }
+            
+            // Formu temizle ve gizle
+            mainPlaylistForm.reset();
+            document.getElementById('playlistFormSection').style.display = 'none';
+            
+            // Playlistleri yeniden yükle
+            await loadMainPlaylists();
+            
+            alert(playlistId === '' ? 'Playlist başarıyla eklendi!' : 'Playlist başarıyla güncellendi!');
+          } catch (error) {
+            console.error('Playlist işlemi sırasında hata:', error);
+            alert('Playlist işlemi sırasında hata oluştu: ' + error.message);
           }
-          
-          localStorage.setItem('playlists', JSON.stringify(playlists));
-          loadMainPlaylists();
-          
-          document.getElementById('playlistFormSection').style.display = 'none';
-          alert(playlistId === '' ? 'Playlist başarıyla eklendi!' : 'Playlist başarıyla güncellendi!');
         });
       }
       

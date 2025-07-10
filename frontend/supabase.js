@@ -241,7 +241,71 @@ const contactService = {
   }
 }
 
+// Playlist servisi
+const playlistService = {
+  // Tüm playlistleri getir
+  async getPlaylists() {
+    const { data, error } = await window.supabaseClient
+      .from('playlists')
+      .select('*')
+      .order('created_at', { ascending: false })
+    
+    if (error) {
+      console.error('Playlistler getirilirken hata:', error)
+      return []
+    }
+    return data || []
+  },
+
+  // Yeni playlist ekle
+  async createPlaylist(playlist) {
+    const { data, error } = await window.supabaseClient
+      .from('playlists')
+      .insert([{
+        title: playlist.title,
+        description: playlist.description,
+        spotify_url: playlist.spotifyUrl
+      }])
+      .select()
+    
+    if (error) {
+      console.error('Playlist eklenirken hata:', error)
+      throw error
+    }
+    return data[0]
+  },
+
+  // Playlist güncelle
+  async updatePlaylist(id, updates) {
+    const { data, error } = await window.supabaseClient
+      .from('playlists')
+      .update(updates)
+      .eq('id', id)
+      .select()
+    
+    if (error) {
+      console.error('Playlist güncellenirken hata:', error)
+      throw error
+    }
+    return data[0]
+  },
+
+  // Playlist sil
+  async deletePlaylist(id) {
+    const { error } = await window.supabaseClient
+      .from('playlists')
+      .delete()
+      .eq('id', id)
+    
+    if (error) {
+      console.error('Playlist silinirken hata:', error)
+      throw error
+    }
+  }
+}
+
 // Make services globally available
 window.authService = authService
 window.blogService = blogService
-window.contactService = contactService 
+window.contactService = contactService
+window.playlistService = playlistService 
