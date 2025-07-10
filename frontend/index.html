@@ -1627,11 +1627,16 @@
                   <h3 class="post-title">${post.title}</h3>
                   <small class="text-muted">${new Date(post.created_at).toLocaleDateString('tr-TR')}</small>
                 </div>
-                ${isAdmin ? `
-                  <button class="btn btn-outline-danger btn-sm" onclick="deletePost(${post.id})" title="Yazıyı Sil">
-                    <i class="fas fa-trash"></i>
+                <div class="d-flex align-items-center gap-2">
+                  <button class="btn btn-outline-primary btn-sm" onclick="sharePost(${post.id}, '${post.title.replace(/'/g, '\'')}')" title="Yazıyı Paylaş">
+                    <i class="fas fa-share-alt"></i>
                   </button>
-                ` : ''}
+                  ${isAdmin ? `
+                    <button class="btn btn-outline-danger btn-sm" onclick="deletePost(${post.id})" title="Yazıyı Sil">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  ` : ''}
+                </div>
               </div>
             </div>
             <div class="post-content">${post.content.replace(/\n/g, '<br>')}</div>
