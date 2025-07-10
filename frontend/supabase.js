@@ -148,9 +148,8 @@ const blogService = {
     if (updated) {
       // Yorumlara id eklediysek, postu güncelle
       await this.updatePost(postId, { comments });
-      // Güncel comments'i tekrar çek
-      post = await this.getPost(postId)
-      comments = post.comments || []
+      alert('Yorumlara id eklendi. Lütfen sayfayı yenileyip tekrar deneyin.');
+      return;
     }
     // Yorumu bul ve yanıt ekle
     const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId))
