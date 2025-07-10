@@ -139,7 +139,7 @@ const blogService = {
     const comments = post.comments || []
     
     // Yorumu bul ve yanıt ekle
-    const commentIndex = comments.findIndex(comment => comment.id === commentId)
+    const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId))
     if (commentIndex !== -1) {
       if (!comments[commentIndex].replies) {
         comments[commentIndex].replies = []
@@ -158,6 +158,9 @@ const blogService = {
           minute: '2-digit'
         })
       })
+    } else {
+      console.error('Yanıt eklenecek yorum bulunamadı! postId:', postId, 'commentId:', commentId, 'comments:', comments)
+      throw new Error('Yanıt eklenecek yorum bulunamadı!')
     }
     
     return await this.updatePost(postId, { comments })
