@@ -135,8 +135,8 @@ const blogService = {
 
   // Yanıt ekle
   async addReply(postId, commentId, replyData) {
-    const post = await this.getPost(postId)
-    const comments = post.comments || []
+    let post = await this.getPost(postId)
+    let comments = post.comments || []
     let updated = false;
     // Eski yorumlarda id yoksa otomatik ata
     comments.forEach(comment => {
@@ -148,6 +148,9 @@ const blogService = {
     if (updated) {
       // Yorumlara id eklediysek, postu güncelle
       await this.updatePost(postId, { comments });
+      // Güncel comments'i tekrar çek
+      post = await this.getPost(postId)
+      comments = post.comments || []
     }
     // Yorumu bul ve yanıt ekle
     const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId))
