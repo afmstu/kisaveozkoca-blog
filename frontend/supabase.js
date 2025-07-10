@@ -323,3 +323,5 @@ window.authService = authService
 window.blogService = blogService
 window.contactService = contactService
 window.playlistService = playlistService 
+
+window.blogService = blogService; 
