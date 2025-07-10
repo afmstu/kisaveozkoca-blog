@@ -183,7 +183,7 @@ const blogService = {
     const comments = post.comments || []
     
     // Yorumu bul ve sil
-    const filteredComments = comments.filter(comment => comment.id !== commentId)
+    const filteredComments = comments.filter(comment => String(comment.id) !== String(commentId))
     
     return await this.updatePost(postId, { comments: filteredComments })
   },
