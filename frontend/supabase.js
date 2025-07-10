@@ -137,14 +137,24 @@ const blogService = {
   async addReply(postId, commentId, replyData) {
     const post = await this.getPost(postId)
     const comments = post.comments || []
-    
+    let updated = false;
+    // Eski yorumlarda id yoksa otomatik ata
+    comments.forEach(comment => {
+      if (!comment.id) {
+        comment.id = Date.now() + Math.floor(Math.random() * 1000000); // Benzersiz id
+        updated = true;
+      }
+    });
+    if (updated) {
+      // Yorumlara id eklediysek, postu güncelle
+      await this.updatePost(postId, { comments });
+    }
     // Yorumu bul ve yanıt ekle
     const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId))
     if (commentIndex !== -1) {
       if (!comments[commentIndex].replies) {
         comments[commentIndex].replies = []
       }
-      
       comments[commentIndex].replies.push({
         id: Date.now(),
         name: replyData.name,
@@ -162,7 +172,6 @@ const blogService = {
       console.error('Yanıt eklenecek yorum bulunamadı! postId:', postId, 'commentId:', commentId, 'comments:', comments)
       throw new Error('Yanıt eklenecek yorum bulunamadı!')
     }
-    
     return await this.updatePost(postId, { comments })
   },
 
