@@ -1107,6 +1107,26 @@
     </div>
   </div>
 
+  <!-- Admin için Mesajlar Butonu -->
+  <button id="showMessagesBtn" class="btn btn-primary" style="display:none; position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+    <i class="fas fa-envelope"></i> Mesajlar
+  </button>
+
+  <!-- Mesajlar Modalı -->
+  <div class="modal fade" id="messagesModal" tabindex="-1" aria-labelledby="messagesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="messagesModalLabel"><i class="fas fa-envelope me-2"></i>Gelen Mesajlar</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="messagesList">
+          <div class="text-center text-muted">Yükleniyor...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="supabase.js" defer></script>
@@ -1339,6 +1359,40 @@
       }
     };
 
+    // Contact service functions
+    const contactService = {
+      async sendMessage(message) {
+        const { data, error } = await supabaseClient
+          .from('contact_messages')
+          .insert([{
+            name: message.name,
+            email: message.email,
+            message: message.message,
+            created_at: new Date().toISOString()
+          }])
+          .select()
+        
+        if (error) {
+          console.error('Mesaj gönderilirken hata:', error);
+          throw error;
+        }
+        return data[0];
+      },
+
+      async getMessages() {
+        const { data, error } = await supabaseClient
+          .from('contact_messages')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (error) {
+          console.error('Mesajlar getirilirken hata:', error);
+          return [];
+        }
+        return data || [];
+      }
+    };
+
     // Admin kontrolü
     async function checkAdminStatus() {
       try {
@@ -1390,6 +1444,10 @@
           adminBtn.title = 'Admin Girişi';
         }
       }
+
+      // Admin için Mesajlar butonunu ve modalını güncelle
+      const showMessagesBtn = document.getElementById('showMessagesBtn');
+      if (showMessagesBtn) showMessagesBtn.style.display = isAdmin ? 'block' : 'none';
     }
 
     // Admin login fonksiyonu
@@ -2002,6 +2060,64 @@
       const adminLoginForm = document.getElementById('adminLoginForm');
       if (adminLoginForm) {
         adminLoginForm.addEventListener('submit', loginAdmin);
+      }
+
+      // İletişim form handler
+      const contactForm = document.getElementById('contactForm');
+      if (contactForm) {
+        contactForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const name = document.getElementById('contactName').value.trim();
+          const email = document.getElementById('contactEmail').value.trim();
+          const message = document.getElementById('contactMessage').value.trim();
+          
+          if (!name || !email || !message) {
+            alert('Lütfen adınız, e-posta ve mesaj alanlarını doldurun.');
+            return;
+          }
+          
+          try {
+            await contactService.sendMessage({ name, email, message });
+            alert('Mesajınız başarıyla gönderildi!');
+            contactForm.reset();
+          } catch (error) {
+            console.error('Mesaj gönderilirken hata:', error);
+            alert('Mesaj gönderilirken hata oluştu: ' + error.message);
+          }
+        });
+      }
+
+      // Admin için Mesajlar butonunu ve modalını yönet
+      const showMessagesBtn = document.getElementById('showMessagesBtn');
+      if (showMessagesBtn) {
+        showMessagesBtn.addEventListener('click', async function() {
+          const messagesList = document.getElementById('messagesList');
+          messagesList.innerHTML = '<div class="text-center text-muted">Yükleniyor...</div>';
+          try {
+            const messages = await contactService.getMessages();
+            if (!messages.length) {
+              messagesList.innerHTML = '<div class="text-center text-muted">Hiç mesaj yok.</div>';
+            } else {
+              messagesList.innerHTML = messages.map(msg => `
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <strong>${msg.name || 'Anonim'}</strong>
+                      <small class="text-muted">${msg.email || ''}</small>
+                      <small class="text-muted">${new Date(msg.created_at).toLocaleString('tr-TR')}</small>
+                    </div>
+                    <div>${msg.message.replace(/\n/g, '<br>')}</div>
+                  </div>
+                </div>
+              `).join('');
+            }
+          } catch (err) {
+            messagesList.innerHTML = '<div class="text-danger">Mesajlar yüklenirken hata oluştu.</div>';
+          }
+          const modal = new bootstrap.Modal(document.getElementById('messagesModal'));
+          modal.show();
+        });
       }
     });
   </script>
