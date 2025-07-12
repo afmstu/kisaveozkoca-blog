@@ -19,6 +19,9 @@
     gtag('js', new Date());
     gtag('config', 'G-2KGTHNQ05P');
   </script>
+  <!-- Preload critical resources -->
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" as="script">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js" as="script">
 </head>
 <body>
   <!-- Navigation -->
@@ -285,996 +288,101 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+  <!-- Load scripts at the end for better performance -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="supabase.min.js" defer></script>
-  <script src="app.min.js" defer></script>
   <script>
-    // Global admin durumu
+    // Inline critical JavaScript for faster loading
     let isAdmin = false;
-
-    // Supabase client
+    window.isAdmin = false;
+    
+    // Initialize Supabase immediately
     const supabaseClient = supabase.createClient(
       'https://xdjyeicdaemdjqntdwsy.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
     );
-
-    // Blog service functions
-    const blogService = {
-      async getPosts() {
+    
+    // Load posts immediately
+    async function loadPostsFast() {
+      try {
         const { data, error } = await supabaseClient
           .from('posts')
           .select('*')
           .order('created_at', { ascending: false })
+          .limit(5); // Only load first 5 posts initially
         
-        if (error) {
-          console.error('Yazılar getirilirken hata:', error)
-          return []
-        }
-        return data || []
-      },
-      
-      async createPost(post) {
-        const { data, error } = await supabaseClient
-          .from('posts')
-          .insert([{
-            title: post.title,
-            content: post.content,
-            comments: post.comments || []
-          }])
-          .select()
-        
-        if (error) {
-          console.error('Yazı eklenirken hata:', error)
-          throw error
-        }
-        return data[0]
-      },
-      
-      async addComment(postId, commentData) {
-        const post = await this.getPost(postId)
-        const comments = post.comments || []
-        comments.push({
-          id: Date.now(),
-          name: commentData.name,
-          text: commentData.text,
-          replies: [],
-          timestamp: new Date().toISOString(),
-          date: new Date().toLocaleDateString('tr-TR', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        })
-        
-        return await this.updatePost(postId, { comments })
-      },
-      
-      async getPost(id) {
-        const { data, error } = await supabaseClient
-          .from('posts')
-          .select('*')
-          .eq('id', id)
-          .single()
-        
-        if (error) {
-          console.error('Yazı getirilirken hata:', error)
-          return null
-        }
-        return data
-      },
-      
-      async updatePost(id, updates) {
-        const { data, error } = await supabaseClient
-          .from('posts')
-          .update(updates)
-          .eq('id', id)
-          .select()
-        
-        if (error) {
-          console.error('Yazı güncellenirken hata:', error)
-          throw error
-        }
-        return data[0]
-      },
-
-      async addReply(postId, commentId, replyData) {
-        const post = await this.getPost(postId);
-        if (!post) {
-          throw new Error('Post not found');
-        }
-
-        const comments = post.comments || [];
-        const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId));
-
-        if (commentIndex === -1) {
-          throw new Error('Comment not found');
-        }
-
-        if (!comments[commentIndex].replies) {
-          comments[commentIndex].replies = [];
-        }
-
-        comments[commentIndex].replies.push({
-          id: Date.now(),
-          name: replyData.name,
-          text: replyData.text,
-          timestamp: new Date().toISOString(),
-          date: new Date().toLocaleDateString('tr-TR', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        });
-
-        return await this.updatePost(postId, { comments });
-      },
-
-      async deleteComment(postId, commentId) {
-        const post = await this.getPost(postId);
-        if (!post) {
-          throw new Error('Post not found');
-        }
-
-        const comments = post.comments || [];
-        const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId));
-
-        if (commentIndex === -1) {
-          throw new Error('Comment not found');
-        }
-
-        comments.splice(commentIndex, 1);
-
-        return await this.updatePost(postId, { comments });
-      },
-
-      async deleteReply(postId, commentId, replyId) {
-        const post = await this.getPost(postId);
-        if (!post) {
-          throw new Error('Post not found');
-        }
-
-        const comments = post.comments || [];
-        const commentIndex = comments.findIndex(comment => String(comment.id) === String(commentId));
-
-        if (commentIndex === -1) {
-          throw new Error('Comment not found');
-        }
-
-        const replies = comments[commentIndex].replies || [];
-        const replyIndex = replies.findIndex(reply => String(reply.id) === String(replyId));
-
-        if (replyIndex === -1) {
-          throw new Error('Reply not found');
-        }
-
-        replies.splice(replyIndex, 1);
-
-        return await this.updatePost(postId, { comments });
-      }
-    };
-
-    // Playlist service functions
-    const playlistService = {
-      async getPlaylists() {
-        const { data, error } = await supabaseClient
-          .from('playlists')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (error) {
-          console.error('Playlistler getirilirken hata:', error);
-          return [];
-        }
-        return data || [];
-      },
-      
-      async createPlaylist(playlist) {
-        const { data, error } = await supabaseClient
-          .from('playlists')
-          .insert([{
-            title: playlist.title,
-            description: playlist.description,
-            spotify_url: playlist.spotify_url
-          }])
-          .select()
-        
-        if (error) {
-          console.error('Playlist eklenirken hata:', error);
-          throw error;
-        }
-        return data[0];
-      },
-      
-      async updatePlaylist(id, updates) {
-        const { data, error } = await supabaseClient
-          .from('playlists')
-          .update(updates)
-          .eq('id', id)
-          .select()
-        
-        if (error) {
-          console.error('Playlist güncellenirken hata:', error);
-          throw error;
-        }
-        return data[0];
-      },
-      
-      async deletePlaylist(id) {
-        const { error } = await supabaseClient
-          .from('playlists')
-          .delete()
-          .eq('id', id);
-        
-        if (error) {
-          console.error('Playlist silinirken hata:', error);
-          throw error;
-        }
-      }
-    };
-
-    // Contact service functions
-    const contactService = {
-      async sendMessage(message) {
-        const { data, error } = await supabaseClient
-          .from('contact_messages')
-          .insert([{
-            name: message.name,
-            email: message.email,
-            message: message.message,
-            created_at: new Date().toISOString()
-          }])
-          .select()
-        
-        if (error) {
-          console.error('Mesaj gönderilirken hata:', error);
-          throw error;
-        }
-        return data[0];
-      },
-
-      async getMessages() {
-        const { data, error } = await supabaseClient
-          .from('contact_messages')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (error) {
-          console.error('Mesajlar getirilirken hata:', error);
-          return [];
-        }
-        return data || [];
-      }
-    };
-
-    // Admin kontrolü
-    async function checkAdminStatus() {
-      try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (user) {
-          const { data: adminData, error: adminError } = await supabaseClient
-            .from('admin_users')
-            .select('is_admin')
-            .eq('id', user.id)
-            .single();
-          
-          if (!adminError && adminData && adminData.is_admin) {
-            isAdmin = true;
-          } else {
-            isAdmin = false;
-          }
-        } else {
-          isAdmin = false;
-        }
-      } catch (error) {
-        isAdmin = false;
-        console.error('Admin check error:', error);
-      }
-      updateAdminUI();
-      loadPosts();
-      loadMainPlaylists(); // Playlistleri de yükle
-    }
-
-    // Admin UI'ını güncelle
-    function updateAdminUI() {
-      const addPlaylistBtn = document.getElementById('addPlaylistBtn');
-      if (addPlaylistBtn) addPlaylistBtn.style.display = isAdmin ? 'block' : 'none';
-      
-      const adminPostForm = document.getElementById('adminPostForm');
-      if (adminPostForm) adminPostForm.style.display = isAdmin ? 'block' : 'none';
-      
-      const visitorNotice = document.getElementById('visitorNotice');
-      if (visitorNotice) visitorNotice.style.display = isAdmin ? 'none' : 'block';
-      
-      // Admin buton ikonunu güncelle
-      const adminBtn = document.getElementById('adminToggle'); // Changed from adminBtn to adminToggle
-      if (adminBtn) {
-        const icon = adminBtn.querySelector('i');
-        if (isAdmin) {
-          icon.className = 'fas fa-crown';
-          adminBtn.title = 'Admin Paneli (Giriş Yapıldı)';
-        } else {
-          icon.className = 'fas fa-shield-alt';
-          adminBtn.title = 'Admin Girişi';
-        }
-      }
-
-      // Admin için Mesajlar butonunu ve modalını güncelle
-      const showMessagesBtn = document.getElementById('showMessagesBtn');
-      if (showMessagesBtn) showMessagesBtn.style.display = isAdmin ? 'block' : 'none';
-    }
-
-    // Admin login fonksiyonu
-    async function loginAdmin(event) {
-      event.preventDefault();
-      const email = document.getElementById('adminEmail').value;
-      const password = document.getElementById('adminPassword').value;
-      try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-        if (error) throw error;
-        // Admin kontrolü
-        await checkAdminStatus();
-        // Modalı kapat
-        const modal = bootstrap.Modal.getInstance(document.getElementById('adminLoginModal'));
-        if (modal) modal.hide();
-        alert('Başarıyla giriş yapıldı!');
-      } catch (error) {
-        console.error('Login error:', error);
-        alert('Giriş yapılırken hata oluştu: ' + error.message);
-      }
-    }
-
-    // Ana sayfa için playlistleri göster
-    async function loadMainPlaylists() {
-      try {
-        const playlists = await playlistService.getPlaylists();
-        const container = document.getElementById('mainPlaylistContainer');
-        container.innerHTML = '';
-        
-        if (playlists.length === 0) {
-          container.innerHTML = '<div class="text-muted p-4">Henüz bir playlist eklenmedi.</div>';
-          return;
-        }
-        
-        for (let i = 0; i < playlists.length; i++) {
-          const playlist = playlists[i];
-          const item = document.createElement('div');
-          item.className = 'playlist-item';
-          
-          // Admin için düzenle/sil butonları
-          let adminButtons = '';
-          if (isAdmin) {
-            adminButtons = `
-              <div class="playlist-admin-actions">
-                <button class="btn btn-sm btn-outline-primary" onclick="editMainPlaylist(${playlist.id})" title="Düzenle">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteMainPlaylist(${playlist.id})" title="Sil">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            `;
-          }
-          
-          item.innerHTML = `
-            ${adminButtons}
-            <div class="playlist-content">
-              <div class="playlist-item-header">
-                <div class="playlist-icon"><i class="fab fa-spotify"></i></div>
-                <div class="playlist-title">${playlist.title || 'Spotify Playlist'}</div>
-              </div>
-              <div class="playlist-description">${playlist.description || ''}</div>
-              <a href="${playlist.spotify_url}" class="spotify-link" target="_blank">
-                <i class="fab fa-spotify me-2"></i>Spotify'da Dinle
-              </a>
-            </div>
-          `;
-          container.appendChild(item);
-        }
-      } catch (error) {
-        console.error('Playlistler yüklenirken hata:', error);
-        const container = document.getElementById('mainPlaylistContainer');
-        container.innerHTML = '<div class="text-danger p-4">Playlistler yüklenirken hata oluştu.</div>';
-      }
-    }
-
-
-
-    // Admin playlist işlemleri
-    async function editMainPlaylist(playlistId) {
-      try {
-        const playlists = await playlistService.getPlaylists();
-        const playlist = playlists.find(p => p.id === parseInt(playlistId));
-        
-        if (!playlist) {
-          alert('Playlist bulunamadı!');
-          return;
-        }
-        
-        document.getElementById('mainPlaylistId').value = playlist.id;
-        document.getElementById('mainPlaylistTitle').value = playlist.title || '';
-        document.getElementById('mainPlaylistDescription').value = playlist.description || '';
-        document.getElementById('mainSpotifyUrl').value = playlist.spotify_url || '';
-        
-        document.getElementById('playlistFormSection').style.display = 'block';
-      } catch (error) {
-        console.error('Playlist düzenleme hatası:', error);
-        alert('Playlist düzenlenirken hata oluştu: ' + error.message);
-      }
-    }
-
-    async function deleteMainPlaylist(playlistId) {
-      if (!window.isAdmin) {
-        alert('Bu işlem için admin yetkisi gereklidir!');
-        return;
-      }
-      
-      if (confirm('Bu playlist\'i silmek istediğinizden emin misiniz?')) {
-        try {
-          await playlistService.deletePlaylist(playlistId);
-          await loadMainPlaylists();
-          alert('Playlist başarıyla silindi!');
-        } catch (error) {
-          console.error('Playlist silme hatası:', error);
-          alert('Playlist silinirken hata oluştu: ' + error.message);
-        }
-      }
-    }
-
-    // Yanıt formunu göster/gizle
-    function toggleReplyForm(postId, commentId) {
-      const replyForm = document.getElementById(`replyForm-${postId}-${commentId}`);
-      if (replyForm) {
-        replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
-      }
-    }
-
-    // Yorum sil (admin için)
-    async function deleteComment(postId, commentId) {
-      // Admin kontrolü
-      if (!window.isAdmin) {
-        alert('Bu işlem için admin yetkisi gereklidir!');
-        return;
-      }
-      
-      if (!confirm('Bu yorumu silmek istediğinizden emin misiniz?')) {
-        return;
-      }
-      
-      try {
-        await blogService.deleteComment(postId, commentId);
-        
-        // Postları yeniden yükle
-        loadPosts();
-        
-        alert('Yorum başarıyla silindi!');
-      } catch (error) {
-        console.error('Yorum silinirken hata:', error);
-        alert('Yorum silinirken hata oluştu: ' + error.message);
-      }
-    }
-
-    // Yanıt sil (admin için)
-    async function deleteReply(postId, commentId, replyId) {
-      // Admin kontrolü
-      if (!window.isAdmin) {
-        alert('Bu işlem için admin yetkisi gereklidir!');
-        return;
-      }
-      
-      if (!confirm('Bu yanıtı silmek istediğinizden emin misiniz?')) {
-        return;
-      }
-      
-      try {
-        await blogService.deleteReply(postId, commentId, replyId);
-        
-        // Postları yeniden yükle
-        loadPosts();
-        
-        alert('Yanıt başarıyla silindi!');
-      } catch (error) {
-        console.error('Yanıt silinirken hata:', error);
-        alert('Yanıt silinirken hata oluştu: ' + error.message);
-      }
-    }
-
-    // Yanıt ekle
-    async function addReply(postId, commentId, event) {
-      event.preventDefault();
-      const form = event.target;
-      const nameInput = form.querySelector('input[placeholder="Adınız"]');
-      const replyInput = form.querySelector('textarea[placeholder="Yanıtınız..."]');
-      const name = nameInput.value.trim();
-      const text = replyInput.value.trim();
-      if (!name || !text) {
-        alert('Lütfen adınızı ve yanıtınızı girin.');
-        return;
-      }
-      try {
-        await blogService.addReply(postId, commentId, { name, text });
-        nameInput.value = '';
-        replyInput.value = '';
-        form.parentElement.style.display = 'none';
-        loadPosts();
-        alert('Yanıtınız başarıyla eklendi!');
-      } catch (error) {
-        console.error('Yanıt eklenirken hata:', error);
-        alert('Yanıt eklenirken hata oluştu.');
-      }
-    }
-
-    // Post yorumları için isim girmesi gereksin
-    async function addPostComment(postId, event) {
-      event.preventDefault();
-      
-      const form = event.target;
-      const nameInput = form.querySelector('input[placeholder="Adınız"]');
-      const commentInput = form.querySelector('textarea[placeholder="Yorumunuz..."]');
-      
-      const name = nameInput.value.trim();
-      const text = commentInput.value.trim();
-      
-      if (!name || !text) {
-        alert('Lütfen adınızı ve yorumunuzu girin.');
-        return;
-      }
-      
-      try {
-        await blogService.addComment(postId, { name, text });
-        
-        // Formu temizle
-        nameInput.value = '';
-        commentInput.value = '';
-        
-        // Postları yeniden yükle
-        loadPosts();
-        
-        alert('Yorumunuz başarıyla eklendi!');
-      } catch (error) {
-        console.error('Yorum eklenirken hata:', error);
-        alert('Yorum eklenirken hata oluştu.');
-      }
-    }
-
-    // İstatistikleri güncelle
-    function updateStats(posts) {
-      // Toplam yazı sayısı
-      const totalPostsElement = document.getElementById('totalPosts');
-      if (totalPostsElement) {
-        totalPostsElement.textContent = posts.length;
-      }
-      
-      // Toplam yorum sayısı
-      const totalCommentsElement = document.getElementById('totalComments');
-      if (totalCommentsElement) {
-        const totalComments = posts.reduce((total, post) => {
-          return total + (post.comments ? post.comments.length : 0);
-        }, 0);
-        totalCommentsElement.textContent = totalComments;
-      }
-      
-      // Bugünkü yazı sayısı
-      const todayPostsElement = document.getElementById('todayPosts');
-      if (todayPostsElement) {
-        const today = new Date();
-        const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD formatı
-        
-        const todayPosts = posts.filter(post => {
-          const postDate = new Date(post.created_at).toISOString().split('T')[0];
-          return postDate === todayString;
-        }).length;
-        
-        todayPostsElement.textContent = todayPosts;
-      }
-    }
-
-    // Postları yükle ve yorum formlarını güncelle
-    async function loadPosts() {
-      try {
-        const posts = await blogService.getPosts();
         const container = document.getElementById('postsContainer');
-        
-        if (posts.length === 0) {
-          container.innerHTML = `
-            <div class="empty-state">
-              <i class="fas fa-pen"></i>
-              <h4>Henüz yazı yok</h4>
-              <p>İlk yazıyı paylaşmak için admin girişi yapın.</p>
-            </div>
-          `;
-          
-          // Boş durumda da istatistikleri güncelle
-          updateStats([]);
-          return;
-        }
-        
-        container.innerHTML = posts.map(post => `
-          <div class="post-card">
-            <div class="post-header">
-              <div class="d-flex justify-content-between align-items-start">
-                <div>
-                  <h3 class="post-title">${post.title}</h3>
-                  <small class="text-muted">${new Date(post.created_at).toLocaleDateString('tr-TR')}</small>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                  <button class="btn btn-outline-primary btn-sm" onclick="sharePost(${post.id}, '${post.title.replace(/'/g, '\'')}')" title="Yazıyı Paylaş">
-                    <i class="fas fa-share-alt"></i>
-                  </button>
-                  ${isAdmin ? `
-                    <button class="btn btn-outline-danger btn-sm" onclick="deletePost(${post.id})" title="Yazıyı Sil">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  ` : ''}
-                </div>
+        if (data && data.length > 0) {
+          container.innerHTML = data.map(post => `
+            <div class="post-card">
+              <div class="post-header">
+                <h3 class="post-title">${post.title}</h3>
+                <small class="text-muted">${new Date(post.created_at).toLocaleDateString('tr-TR')}</small>
               </div>
+              <div class="post-content">${post.content.replace(/\n/g, '<br>')}</div>
             </div>
-            <div class="post-content">${post.content.replace(/\n/g, '<br>')}</div>
-            <div class="comments-section">
-              <h5 class="comments-title">
-                <i class="fas fa-comments"></i>
-                Yorumlar (${post.comments ? post.comments.length : 0})
-              </h5>
-              <div class="comments-list">
-                ${post.comments ? post.comments.map(comment => `
-                  <div class="comment-item">
-                    <div class="comment-header">
-                      <strong>${comment.name || 'Anonim'}</strong>
-                      <small class="text-muted">${comment.date}</small>
-                    </div>
-                    <div class="comment-text">${comment.text.replace(/\n/g, '<br>')}</div>
-                    
-                    <!-- Yanıt butonu -->
-                    <div class="comment-actions">
-                      <button class="btn btn-link btn-sm reply-btn" onclick="toggleReplyForm(${post.id}, ${comment.id})">
-                        <i class="fas fa-reply"></i> Yanıtla
-                      </button>
-                      ${isAdmin ? `
-                        <button class="btn btn-link btn-sm delete-btn" onclick="deleteComment(${post.id}, ${comment.id})" title="Yorumu Sil">
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      ` : ''}
-                    </div>
-                    
-                    <!-- Yanıt formu -->
-                    <div class="reply-form" id="replyForm-${post.id}-${comment.id}" style="display: none;">
-                      <form onsubmit="addReply(${post.id}, ${comment.id}, event)">
-                        <div class="row">
-                          <div class="col-md-4">
-                            <input type="text" class="form-control" placeholder="Adınız" required>
-                          </div>
-                          <div class="col-md-8">
-                            <div class="input-group">
-                              <textarea class="form-control" placeholder="Yanıtınız..." rows="2" required></textarea>
-                              <button class="btn btn-outline-secondary" type="submit">
-                                <i class="fas fa-paper-plane"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                    
-                    <!-- Yanıtlar -->
-                    ${comment.replies && comment.replies.length > 0 ? `
-                      <div class="replies-section">
-                        ${comment.replies.map(reply => `
-                          <div class="reply-item">
-                            <div class="reply-header">
-                              <strong>${reply.name || 'Anonim'}</strong>
-                              <small class="text-muted">${reply.date}</small>
-                              ${isAdmin ? `
-                                <button class="btn btn-link btn-sm delete-btn" onclick="deleteReply(${post.id}, ${comment.id}, ${reply.id})" title="Yanıtı Sil">
-                                  <i class="fas fa-trash"></i>
-                                </button>
-                              ` : ''}
-                            </div>
-                            <div class="reply-text">${reply.text.replace(/\n/g, '<br>')}</div>
-                          </div>
-                        `).join('')}
-                      </div>
-                    ` : ''}
-                  </div>
-                `).join('') : ''}
-              </div>
-              <form class="comment-form" onsubmit="addPostComment(${post.id}, event)">
-                <div class="row">
-                  <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Adınız" required>
-                  </div>
-                  <div class="col-md-8">
-                    <div class="input-group">
-                      <textarea class="form-control" placeholder="Yorumunuz..." rows="2" required></textarea>
-                      <button class="btn btn-outline-secondary" type="submit">
-                        <i class="fas fa-paper-plane"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        `).join('');
-        
-        // İstatistikleri güncelle
-        updateStats(posts);
-        
-      } catch (error) {
-        console.error('Postlar yüklenirken hata:', error);
-      }
-    }
-
-    // Yazı silme fonksiyonu
-    async function deletePost(postId) {
-      // Admin kontrolü
-      if (!window.isAdmin) {
-        alert('Bu işlem için admin yetkisi gereklidir!');
-        return;
-      }
-      
-      if (!confirm('Bu yazıyı silmek istediğinizden emin misiniz?')) {
-        return;
-      }
-      
-      try {
-        const { error } = await supabaseClient
-          .from('posts')
-          .delete()
-          .eq('id', postId);
-        
-        if (error) throw error;
-        
-        alert('Yazı başarıyla silindi!');
-        
-        // Postları yeniden yükle (bu zaten toplam sayıyı güncelleyecek)
-        await loadPosts();
-        
-      } catch (error) {
-        console.error('Delete error:', error);
-        alert('Yazı silinirken hata oluştu: ' + error.message);
-      }
-    }
-
-    // Dark mode toggle
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) {
-      // Mevcut tema durumunu kontrol et
-      const currentTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', currentTheme);
-      
-      // İkonu güncelle
-      const icon = themeToggle.querySelector('i');
-      if (currentTheme === 'dark') {
-        icon.className = 'fas fa-sun';
-        themeToggle.title = 'Açık Moda Geç';
-      } else {
-        icon.className = 'fas fa-moon';
-        themeToggle.title = 'Karanlık Moda Geç';
-      }
-      
-      // Click event listener ekle
-      themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        // Temayı değiştir
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        
-        // Animasyon ekle
-        themeToggle.style.transform = 'rotate(360deg)';
-        setTimeout(() => {
-          themeToggle.style.transform = 'rotate(0deg)';
-        }, 300);
-        
-        // İkonu güncelle
-        const icon = themeToggle.querySelector('i');
-        if (newTheme === 'dark') {
-          icon.className = 'fas fa-sun';
-          themeToggle.title = 'Açık Moda Geç';
+          `).join('');
         } else {
-          icon.className = 'fas fa-moon';
-          themeToggle.title = 'Karanlık Moda Geç';
+          container.innerHTML = '<div class="empty-state"><i class="fas fa-pen"></i><h4>Henüz yazı yok</h4></div>';
         }
-      });
+      } catch (error) {
+        console.error('Fast load error:', error);
+      }
     }
-
-    // Event listeners
+    
+    // Load playlists immediately
+    async function loadPlaylistsFast() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('playlists')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(4); // Only load first 4 playlists initially
+        
+        const container = document.getElementById('mainPlaylistContainer');
+        if (data && data.length > 0) {
+          container.innerHTML = data.map(playlist => `
+            <div class="playlist-item">
+              <div class="playlist-content">
+                <div class="playlist-item-header">
+                  <div class="playlist-icon"><i class="fab fa-spotify"></i></div>
+                  <div class="playlist-title">${playlist.title || 'Spotify Playlist'}</div>
+                </div>
+                <div class="playlist-description">${playlist.description || ''}</div>
+                <a href="${playlist.spotify_url}" class="spotify-link" target="_blank">
+                  <i class="fab fa-spotify me-2"></i>Spotify'da Dinle
+                </a>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = '<div class="text-muted p-4">Henüz bir playlist eklenmedi.</div>';
+        }
+      } catch (error) {
+        console.error('Fast playlist load error:', error);
+      }
+    }
+    
+    // Initialize theme
     document.addEventListener('DOMContentLoaded', function() {
-      // Sayfa yüklendiğinde mevcut tema durumunu kontrol et
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
       
-      // Dark mode toggle'ı güncelle
+      // Load content immediately
+      loadPostsFast();
+      loadPlaylistsFast();
+      
+      // Theme toggle
       const themeToggle = document.getElementById('themeToggle');
       if (themeToggle) {
-        const icon = themeToggle.querySelector('i');
-        if (savedTheme === 'dark') {
-          icon.className = 'fas fa-sun';
-          themeToggle.title = 'Açık Moda Geç';
-        } else {
-          icon.className = 'fas fa-moon';
-          themeToggle.title = 'Karanlık Moda Geç';
-        }
-      }
-      
-      checkAdminStatus();
-      loadMainPlaylists();
-      loadPosts();
-      
-      // Admin post form handler
-      const postForm = document.getElementById('postForm');
-      if (postForm) {
-        postForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
+        themeToggle.addEventListener('click', function() {
+          const currentTheme = document.documentElement.getAttribute('data-theme');
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
           
-          const title = document.getElementById('postTitle').value.trim();
-          const content = document.getElementById('postContent').value.trim();
-          
-          if (!title || !content) {
-            alert('Lütfen başlık ve içerik alanlarını doldurun.');
-            return;
-          }
-          
-          try {
-            // Post'u ekle
-            await blogService.createPost({
-              title: title,
-              content: content
-            });
-            
-            // Formu temizle
-            postForm.reset();
-            
-            // Postları yeniden yükle (bu zaten istatistikleri güncelleyecek)
-            await loadPosts();
-            
-            alert('Yazınız başarıyla yayımlandı!');
-            
-          } catch (error) {
-            console.error('Post eklenirken hata:', error);
-            alert('Yazı eklenirken hata oluştu: ' + error.message);
-          }
-        });
-      }
-      
-      // Yeni playlist ekle butonu
-      const addPlaylistBtn = document.getElementById('addPlaylistBtn');
-      if (addPlaylistBtn) {
-        addPlaylistBtn.addEventListener('click', function() {
-          document.getElementById('mainPlaylistId').value = '';
-          document.getElementById('mainPlaylistTitle').value = '';
-          document.getElementById('mainPlaylistDescription').value = '';
-          document.getElementById('mainSpotifyUrl').value = '';
-          document.getElementById('playlistFormSection').style.display = 'block';
-        });
-      }
-      
-      // Playlist formu
-      const mainPlaylistForm = document.getElementById('mainPlaylistForm');
-      if (mainPlaylistForm) {
-        mainPlaylistForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          
-          // Admin kontrolü
-          if (!window.isAdmin) {
-            alert('Sadece admin kullanıcılar playlist ekleyebilir!');
-            return;
-          }
-          
-          const playlistId = document.getElementById('mainPlaylistId').value;
-          const title = document.getElementById('mainPlaylistTitle').value;
-          const description = document.getElementById('mainPlaylistDescription').value;
-          const spotifyUrl = document.getElementById('mainSpotifyUrl').value;
-          
-          try {
-            if (playlistId === '') {
-              // Yeni playlist ekle
-              await playlistService.createPlaylist({
-                title: title,
-                description: description,
-                spotify_url: spotifyUrl
-              });
-            } else {
-              // Mevcut playlist'i güncelle
-              await playlistService.updatePlaylist(playlistId, {
-                title: title,
-                description: description,
-                spotify_url: spotifyUrl
-              });
-            }
-            
-            // Formu temizle ve gizle
-            mainPlaylistForm.reset();
-            document.getElementById('playlistFormSection').style.display = 'none';
-            
-            // Playlistleri yeniden yükle
-            await loadMainPlaylists();
-            
-            alert(playlistId === '' ? 'Playlist başarıyla eklendi!' : 'Playlist başarıyla güncellendi!');
-          } catch (error) {
-            console.error('Playlist işlemi sırasında hata:', error);
-            alert('Playlist işlemi sırasında hata oluştu: ' + error.message);
-          }
-        });
-      }
-      
-      // İptal butonu
-      const cancelPlaylistFormBtn = document.getElementById('cancelPlaylistFormBtn');
-      if (cancelPlaylistFormBtn) {
-        cancelPlaylistFormBtn.addEventListener('click', function() {
-          document.getElementById('playlistFormSection').style.display = 'none';
-        });
-      }
-
-      // Admin login form submit
-      const adminLoginForm = document.getElementById('adminLoginForm');
-      if (adminLoginForm) {
-        adminLoginForm.addEventListener('submit', loginAdmin);
-      }
-
-      // İletişim form handler
-      const contactForm = document.getElementById('contactForm');
-      if (contactForm) {
-        contactForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          
-          const name = document.getElementById('contactName').value.trim();
-          const email = document.getElementById('contactEmail').value.trim();
-          const message = document.getElementById('contactMessage').value.trim();
-          
-          if (!name || !email || !message) {
-            alert('Lütfen adınız, e-posta ve mesaj alanlarını doldurun.');
-            return;
-          }
-          
-          try {
-            await contactService.sendMessage({ name, email, message });
-            alert('Mesajınız başarıyla gönderildi!');
-            contactForm.reset();
-          } catch (error) {
-            console.error('Mesaj gönderilirken hata:', error);
-            alert('Mesaj gönderilirken hata oluştu: ' + error.message);
-          }
-        });
-      }
-
-      // Admin için Mesajlar butonunu ve modalını yönet
-      const showMessagesBtn = document.getElementById('showMessagesBtn');
-      if (showMessagesBtn) {
-        showMessagesBtn.addEventListener('click', async function() {
-          const messagesList = document.getElementById('messagesList');
-          messagesList.innerHTML = '<div class="text-center text-muted">Yükleniyor...</div>';
-          try {
-            const messages = await contactService.getMessages();
-            if (!messages.length) {
-              messagesList.innerHTML = '<div class="text-center text-muted">Hiç mesaj yok.</div>';
-            } else {
-              messagesList.innerHTML = messages.map(msg => `
-                <div class="card mb-3">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                      <strong>${msg.name || 'Anonim'}</strong>
-                      <small class="text-muted">${msg.email || ''}</small>
-                      <small class="text-muted">${new Date(msg.created_at).toLocaleString('tr-TR')}</small>
-                    </div>
-                    <div>${msg.message.replace(/\n/g, '<br>')}</div>
-                  </div>
-                </div>
-              `).join('');
-            }
-          } catch (err) {
-            messagesList.innerHTML = '<div class="text-danger">Mesajlar yüklenirken hata oluştu.</div>';
-          }
-          const modal = new bootstrap.Modal(document.getElementById('messagesModal'));
-          modal.show();
+          const icon = themeToggle.querySelector('i');
+          icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         });
       }
     });
