@@ -379,7 +379,7 @@
           
           <!-- Reply Button -->
           <div class="comment-actions">
-            <a href="#" class="reply-btn" onclick="showReplyForm(${comment.id})">
+            <a href="#" class="reply-btn" onclick="showReplyForm(event, ${comment.id})">
               <i class="fas fa-reply"></i> Yanıtla
             </a>
           </div>
@@ -387,8 +387,8 @@
           <!-- Reply Form (Hidden by default) -->
           <div class="reply-form" id="reply-form-${comment.id}" style="display: none;">
             <div class="input-group">
-              <input type="text" class="form-control" id="reply-name-${comment.id}" placeholder="Adınız ve soyadınız" required>
-              <textarea class="form-control" id="reply-text-${comment.id}" placeholder="Yanıtınızı yazın..." rows="2" required></textarea>
+              <input id="reply-name-${comment.id}" placeholder="Adınız ve soyadınız" required>
+              <textarea id="reply-text-${comment.id}" placeholder="Yanıtınızı yazın..." required></textarea>
               <button class="btn btn-outline-secondary" onclick="addReply(${comment.postId}, ${comment.id})">
                 <i class="fas fa-paper-plane"></i> Yanıtla
               </button>
@@ -475,7 +475,8 @@
     }
     
     // Show reply form
-    function showReplyForm(commentId) {
+    function showReplyForm(event, commentId) {
+      if (event) event.preventDefault();
       const replyForm = document.getElementById(`reply-form-${commentId}`);
       if (replyForm) {
         replyForm.style.display = 'block';
