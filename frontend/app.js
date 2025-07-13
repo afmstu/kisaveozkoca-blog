@@ -463,3 +463,68 @@ function ensureDarkModeStyles() {
 }
 window.addEventListener('themeChanged', ensureDarkModeStyles);
 document.addEventListener('DOMContentLoaded', ensureDarkModeStyles); 
+
+// Render comments
+function renderComments(comments, postId) {
+    if (!comments || comments.length === 0) {
+        return '<div class="text-muted">Henüz yorum yok. İlk yorumu siz yapın!</div>';
+    }
+    return comments.map(comment => `
+        <div class="comment-item" data-comment-id="${comment.id}" data-post-id="${postId}">
+            <div class="comment-header">
+                <strong>${comment.name}</strong>
+                <small class="text-muted">${comment.date}</small>
+                ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteComment(${postId}, ${comment.id})"><i class="fas fa-trash"></i></a>` : ''}
+            </div>
+            <div class="comment-text">${comment.text}</div>
+            <!-- Reply Button -->
+            <div class="comment-actions">
+                <a href="#" class="reply-btn" onclick="showReplyForm(event, ${comment.id}, ${postId})">
+                    <i class="fas fa-reply"></i> Yanıtla
+                </a>
+            </div>
+            <!-- Reply Form (Hidden by default) -->
+            <div class="reply-form" id="reply-form-${comment.id}" data-post-id="${postId}" style="display: none;">
+                <div class="input-group">
+                    <input id="reply-name-${comment.id}" placeholder="Adınız ve soyadınız" required>
+                    <textarea id="reply-text-${comment.id}" placeholder="Yanıtınızı yazın..." required></textarea>
+                    <button class="btn btn-outline-secondary" onclick="addReply(${postId}, ${comment.id})">
+                        <i class="fas fa-paper-plane"></i> Yanıtla
+                    </button>
+                </div>
+            </div>
+            <!-- Replies Section -->
+            ${renderReplies(comment.replies || [], comment.id, postId)}
+        </div>
+    `).join('');
+}
+
+// Render replies
+function renderReplies(replies, commentId, postId) {
+    if (!replies || replies.length === 0) {
+        return '';
+    }
+    return `
+        <div class="replies-section">
+            ${replies.map(reply => `
+                <div class="reply-item" data-reply-id="${reply.id}">
+                    <div class="reply-header">
+                        <strong>${reply.name}</strong>
+                        <small class="text-muted">${reply.date}</small>
+                        ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteReply(${reply.postId}, ${commentId}, ${reply.id})"><i class="fas fa-trash"></i></a>` : ''}
+                    </div>
+                    <div class="reply-text">${reply.text}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// addReply fonksiyonunun başına kontrol ekle
+window.addReply = function(postId, commentId) {
+    if (!postId || !commentId) {
+        alert('Yanıt eklenemiyor: postId veya commentId eksik!');
+        return;
+    }
+    // ... mevcut addReply fonksiyonunun devamı ...
+} 
