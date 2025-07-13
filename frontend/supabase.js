@@ -136,8 +136,11 @@ window.blogService = {
 
   // Yanıt ekle
   async addReply(postId, commentId, replyData) {
-    let post = await this.getPost(postId)
-    let comments = post.comments || []
+    const post = await this.getPost(postId);
+    if (!post) {
+      throw new Error('Post bulunamadı!');
+    }
+    let comments = post.comments || [];
     let updated = false;
     // Eski yorumlarda id yoksa otomatik ata
     comments.forEach(comment => {
