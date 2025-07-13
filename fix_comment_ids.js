@@ -4,6 +4,8 @@
 console.log('Script başladı...');
 
 const { createClient } = require('@supabase/supabase-js');
+// Eğer Node.js 14+ kullanıyorsanız, benzersiz id için crypto.randomUUID kullanabilirsiniz
+// const { randomUUID } = require('crypto');
 
 console.log('Supabase client oluşturuluyor...');
 
@@ -13,6 +15,11 @@ const supabase = createClient(
 );
 
 console.log('Supabase client oluşturuldu.');
+
+function generateId() {
+  // Eğer Node.js 14+ ise: return randomUUID();
+  return Date.now() + Math.floor(Math.random() * 1000000);
+}
 
 async function fixCommentIds() {
   console.log('fixCommentIds fonksiyonu başladı...');
@@ -31,27 +38,30 @@ async function fixCommentIds() {
   for (const post of posts) {
     let changed = false;
     if (Array.isArray(post.comments)) {
-      post.comments.forEach(comment => {
+      for (const comment of post.comments) {
         if (!comment.id) {
-          comment.id = Date.now() + Math.floor(Math.random() * 1000000);
+          comment.id = generateId();
           changed = true;
         }
-        // Yanıtlar için de id kontrolü ekle
         if (Array.isArray(comment.replies)) {
-          comment.replies.forEach(reply => {
+          for (const reply of comment.replies) {
             if (!reply.id) {
-              reply.id = Date.now() + Math.floor(Math.random() * 1000000);
+              reply.id = generateId();
               changed = true;
             }
-          });
+          }
         }
-      });
+      }
       if (changed) {
-        await supabase
+        const { error: updateError } = await supabase
           .from('posts')
           .update({ comments: post.comments })
           .eq('id', post.id);
-        console.log(`Post ${post.id} güncellendi.`);
+        if (updateError) {
+          console.error(`Post ${post.id} güncellenirken hata oluştu:`, updateError);
+        } else {
+          console.log(`Post ${post.id} güncellendi.`);
+        }
       }
     }
   }
