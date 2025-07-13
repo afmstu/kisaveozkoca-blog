@@ -419,7 +419,7 @@
                                 
                                 <!-- Comments List -->
                                 <div class="comments-list" id="comments-${post.id}">
-                                    ${renderComments(post.comments || [])}
+                                    ${renderComments(post.comments || [], post.id)}
                                 </div>
                                 
                                 <!-- Comment Form -->
@@ -449,7 +449,7 @@
         }
         
         // Render comments
-        function renderComments(comments) {
+        function renderComments(comments, postId) {
             if (!comments || comments.length === 0) {
                 return '<div class="text-muted">Henüz yorum yok. İlk yorumu siz yapın!</div>';
             }
@@ -459,7 +459,7 @@
                     <div class="comment-header">
                         <strong>${comment.name}</strong>
                         <small class="text-muted">${comment.date}</small>
-                        ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteComment(${comment.postId}, ${comment.id})"><i class="fas fa-trash"></i></a>` : ''}
+                        ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteComment(${postId}, ${comment.id})"><i class="fas fa-trash"></i></a>` : ''}
                     </div>
                     <div class="comment-text">${comment.text}</div>
                     
@@ -475,20 +475,20 @@
                         <div class="input-group">
                             <input id="reply-name-${comment.id}" placeholder="Adınız ve soyadınız" required>
                             <textarea id="reply-text-${comment.id}" placeholder="Yanıtınızı yazın..." required></textarea>
-                            <button class="btn btn-outline-secondary" onclick="addReply(${comment.postId}, ${comment.id})">
+                            <button class="btn btn-outline-secondary" onclick="addReply(${postId}, ${comment.id})">
                                 <i class="fas fa-paper-plane"></i> Yanıtla
                             </button>
                         </div>
                     </div>
                     
                     <!-- Replies Section -->
-                    ${renderReplies(comment.replies || [], comment.id)}
+                    ${renderReplies(comment.replies || [], comment.id, postId)}
                 </div>
             `).join('');
         }
         
         // Render replies
-        function renderReplies(replies, commentId) {
+        function renderReplies(replies, commentId, postId) {
             if (!replies || replies.length === 0) {
                 return '';
             }
@@ -500,7 +500,7 @@
                             <div class="reply-header">
                                 <strong>${reply.name}</strong>
                                 <small class="text-muted">${reply.date}</small>
-                                ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteReply(${reply.postId}, ${commentId}, ${reply.id})"><i class="fas fa-trash"></i></a>` : ''}
+                                ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteReply(${postId}, ${commentId}, ${reply.id})"><i class="fas fa-trash"></i></a>` : ''}
                             </div>
                             <div class="reply-text">${reply.text}</div>
                         </div>
