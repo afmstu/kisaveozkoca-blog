@@ -226,6 +226,8 @@ body {
   margin-bottom: 30px;
   overflow: hidden;
   transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .post-card:hover {
@@ -266,6 +268,8 @@ body {
   border-top: 1px solid var(--border-color);
   transition: all 0.3s ease;
   border-radius: 0 0 15px 15px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .comments-section {
@@ -318,6 +322,8 @@ body {
 
 .comments-list {
   margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .comment-form {
@@ -326,7 +332,9 @@ body {
   padding: 25px;
   border-radius: 15px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  box-shadow: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .comment-form h5 {
@@ -344,16 +352,26 @@ body {
 }
 
 .input-group {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 15px;
+  background: transparent;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 12px;
+  overflow: visible;
+  box-shadow: none;
 }
 
 .input-group input,
 .input-group textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
   border: 2px solid var(--border-color);
   border-radius: 10px;
   padding: 15px 18px;
@@ -362,6 +380,7 @@ body {
   font-size: 14px;
   transition: all 0.3s ease;
   font-family: inherit;
+  resize: none;
 }
 
 .input-group input {
@@ -395,6 +414,8 @@ body {
   font-weight: 600;
   border-radius: 10px;
   transition: all 0.3s ease;
+  width: auto;
+  min-width: 150px;
 }
 
 .input-group .btn:hover {

@@ -307,12 +307,16 @@
     // Load posts with comments
     async function loadPostsWithComments() {
       try {
+        console.log('Loading posts with comments...');
         const { data, error } = await supabaseClient
           .from('posts')
           .select('*')
           .order('created_at', { ascending: false });
         
+        console.log('Posts data:', data);
         const container = document.getElementById('postsContainer');
+        console.log('Container element:', container);
+        
         if (data && data.length > 0) {
           container.innerHTML = data.map(post => `
             <div class="post-card" data-post-id="${post.id}">
@@ -339,9 +343,9 @@
                 <div class="comment-form">
                   <h5><i class="fas fa-edit"></i>Yorum Yap</h5>
                   <div class="input-group">
-                    <input type="text" class="form-control" id="comment-name-${post.id}" placeholder="Adınız ve soyadınız" required>
-                    <textarea class="form-control" id="comment-text-${post.id}" placeholder="Düşüncelerinizi paylaşın..." rows="3" required></textarea>
-                    <button class="btn btn-outline-secondary" onclick="addComment(${post.id})">
+                    <input type="text" class="form-control" id="comment-name-${post.id}" placeholder="Adınız ve soyadınız" required style="width: 100%; margin-bottom: 10px;">
+                    <textarea class="form-control" id="comment-text-${post.id}" placeholder="Düşüncelerinizi paylaşın..." rows="3" required style="width: 100%; margin-bottom: 10px;"></textarea>
+                    <button class="btn btn-outline-secondary" onclick="addComment(${post.id})" style="align-self: flex-end;">
                       <i class="fas fa-paper-plane"></i> Yorum Yap
                     </button>
                   </div>
@@ -359,6 +363,7 @@
     
     // Render comments
     function renderComments(comments) {
+      console.log('Rendering comments:', comments);
       if (!comments || comments.length === 0) {
         return '<div class="text-muted">Henüz yorum yok. İlk yorumu siz yapın!</div>';
       }
@@ -566,6 +571,35 @@
       }
     }
     
+    // İstatistikleri güncelle
+    async function updateStats() {
+      const { data: posts, error } = await supabaseClient
+        .from('posts')
+        .select('id, created_at, comments');
+
+      if (error) {
+        console.error('İstatistikler alınamadı:', error);
+        return;
+      }
+
+      // Toplam yazı
+      document.getElementById('totalPosts').textContent = posts.length;
+
+      // Toplam yorum
+      let totalComments = 0;
+      posts.forEach(post => {
+        if (Array.isArray(post.comments)) {
+          totalComments += post.comments.length;
+        }
+      });
+      document.getElementById('totalComments').textContent = totalComments;
+
+      // Bugünkü yazılar
+      const today = new Date().toISOString().slice(0, 10);
+      const todayPosts = posts.filter(post => post.created_at && post.created_at.slice(0, 10) === today);
+      document.getElementById('todayPosts').textContent = todayPosts.length;
+    }
+
     // Initialize theme and admin state
     document.addEventListener('DOMContentLoaded', function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
@@ -577,6 +611,7 @@
       // Load content immediately
       loadPostsWithComments();
       loadPlaylistsFast();
+      updateStats(); // Call updateStats on page load
       
       // Theme toggle
       const themeToggle = document.getElementById('themeToggle');
