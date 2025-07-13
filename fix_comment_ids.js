@@ -1,14 +1,22 @@
 // Supabase'deki tüm postların comments alanındaki yorumlara ve yanıtlara id ekler
 // ÇALIŞTIRMADAN ÖNCE: 'YOUR_SERVICE_ROLE_KEY' kısmını kendi Supabase Service Role Key'in ile değiştir!
 
+console.log('Script başladı...');
+
 const { createClient } = require('@supabase/supabase-js');
+
+console.log('Supabase client oluşturuluyor...');
 
 const supabase = createClient(
   'https://xdjyeicdaemdjqntdwsy.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTczMDI0OSwiZXhwIjoyMDY3MzA2MjQ5fQ.IphmemBenHmFzTcxun0_H7b3kLQ7rF51fJTgcOf1aEQ' // Service Role Key kullan! (asla client/public anahtarını kullanma)
 );
 
+console.log('Supabase client oluşturuldu.');
+
 async function fixCommentIds() {
+  console.log('fixCommentIds fonksiyonu başladı...');
+  
   const { data: posts, error } = await supabase
     .from('posts')
     .select('id, comments');
@@ -17,6 +25,8 @@ async function fixCommentIds() {
     console.error('Postlar çekilemedi:', error);
     return;
   }
+
+  console.log(`${posts.length} post bulundu.`);
 
   for (const post of posts) {
     let changed = false;
@@ -48,4 +58,7 @@ async function fixCommentIds() {
   console.log('Tüm yorumlara ve yanıtlara id eklendi!');
 }
 
-fixCommentIds(); 
+console.log('fixCommentIds fonksiyonu çağrılıyor...');
+fixCommentIds().catch(error => {
+  console.error('Hata oluştu:', error);
+});

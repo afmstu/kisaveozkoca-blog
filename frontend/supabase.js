@@ -45,7 +45,7 @@ const authService = {
 }
 
 // Blog yazıları için fonksiyonlar
-const blogService = {
+window.blogService = {
   // Tüm yazıları getir
   async getPosts() {
     const { data, error } = await window.supabaseClient

@@ -1,719 +1,777 @@
 <!DOCTYPE html>
 <html lang="tr" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>kısaveözkoca - Mustafa Özkoca'nın Kişisel Blogu</title>
-  <meta name="description" content="kısaveözkoca: Mustafa Özkoca'nın kişisel blog sitesi. Fikirler, yazılar, müzik önerileri ve daha fazlası.">
-  <meta name="keywords" content="kısaveözkoca, mustafa özkoca, kişisel blog, blog, fikir, yazı, müzik, playlist">
-  <meta name="author" content="Mustafa Özkoca">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link href="styles.css" rel="stylesheet">
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2KGTHNQ05P"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-2KGTHNQ05P');
-  </script>
-  <!-- Preload critical resources -->
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" as="script">
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js" as="script">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kısaveözkoca - Mustafa Özkoca'nın Kişisel Blogu</title>
+    <meta name="description" content="kısaveözkoca: Mustafa Özkoca'nın kişisel blog sitesi. Fikirler, yazılar, müzik önerileri ve daha fazlası.">
+    <meta name="keywords" content="kısaveözkoca, mustafa özkoca, kişisel blog, blog, fikir, yazı, müzik, playlist">
+    <meta name="author" content="Mustafa Özkoca">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="styles.css" as="style">
+    
+    <!-- Critical CSS inline -->
+    <style>
+        :root {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: white;
+            --text-primary: #2c3e50;
+            --text-secondary: #555;
+            --text-light: #6c757d;
+            --border-color: #e9ecef;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --card-bg: white;
+            --navbar-bg: rgba(255, 255, 255, 0.95);
+            --hero-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .navbar {
+            background: var(--navbar-bg) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            min-height: 70px;
+        }
+        
+        .hero-section {
+            background: var(--hero-bg);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 30px 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .post-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: none;
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            transition: border-color 0.2s ease;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            outline: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Loading state */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        /* Optimize animations */
+        * {
+            will-change: auto;
+        }
+        
+        .post-card,
+        .form-control,
+        .btn-primary {
+            will-change: transform;
+        }
+    </style>
+    
+    <!-- Non-critical CSS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' fill='%23007bff'%3EM%3C/text%3E%3C/svg%3E">
 </head>
 <body>
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">
-        <i class="fas fa-pen me-2"></i>
-        kısaveözkoca
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link active" href="index.html">
-              <i class="fas fa-home me-1"></i>Ana Sayfa
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-pen me-2"></i>kısaveözkoca
             </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="about.html">
-              <i class="fas fa-user me-1"></i>Hakkında
-            </a>
-          </li>
-          <li class="nav-item">
-            <button class="theme-toggle" id="themeToggle" title="Karanlık Modu Aç/Kapat">
-              <i class="fas fa-moon"></i>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
             </button>
-          </li>
-          <li class="nav-item">
-            <button class="admin-toggle" id="adminToggle" title="Admin Girişi">
-              <i class="fas fa-crown"></i>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero Section -->
-  <div class="hero-section" style="margin-top: 80px;">
-    <div class="container">
-      <div class="row justify-content-center text-center">
-        <div class="col-lg-8">
-          <h1 class="hero-title">
-            <i class="fas fa-pen me-3"></i>
-            kısaveözkoca
-          </h1>
-          <p class="hero-subtitle">Havadan Sudan Biraz da Benden Fikirler - kısaveözkoca</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-
-    <!-- Admin Post Form (Hidden by default) -->
-    <div class="post-form-card" id="adminPostForm" style="display: none;">
-      <h5 class="post-form-header">
-        <i class="fas fa-edit me-2"></i>
-        Yönetici Paneli - Fikrinizi Paylaşın
-        <span class="admin-badge">
-          <i class="fas fa-crown me-1"></i>ADMIN
-        </span>
-        <button class="btn btn-outline-light btn-sm ms-auto" id="logoutBtn" title="Çıkış Yap">
-          <i class="fas fa-sign-out-alt"></i>
-        </button>
-      </h5>
-      <div class="card-body p-4">
-        <form id="postForm">
-          <div class="mb-3">
-            <label for="postTitle" class="form-label">
-              <i class="fas fa-heading me-2"></i>Başlık
-            </label>
-            <input type="text" class="form-control" id="postTitle" placeholder="Fikriniz ne hakkında?" required>
-          </div>
-          <div class="mb-3">
-            <label for="postContent" class="form-label">
-              <i class="fas fa-align-left me-2"></i>Düşünceleriniz
-            </label>
-            <textarea class="form-control" id="postContent" rows="8" placeholder="Yaratıcı düşüncelerinizi, içgörülerinizi veya fikirlerinizi paylaşın...&#10;&#10;Paragraf ayrımlarınız korunacaktır." required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">
-            <i class="fas fa-paper-plane me-2"></i>Yazıyı Yayınla
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Posts Container -->
-    <div id="postsContainer" class="mt-4">
-      <!-- Yazılar buraya dinamik olarak eklenecek -->
-    </div>
-
-    <!-- Playlist Önerisi Ana Sayfa -->
-    <div class="playlist-section">
-      <div class="playlist-card">
-        <div class="playlist-header d-flex align-items-center justify-content-between">
-          <h2 class="mb-0"><i class="fas fa-music me-2"></i>Playlistler</h2>
-          <button class="btn btn-success btn-sm" id="addPlaylistBtn" style="display:none;"><i class="fas fa-plus me-2"></i>Yeni Playlist</button>
-        </div>
-        <div class="playlist-container" id="mainPlaylistContainer">
-          <!-- Playlist'ler buraya dinamik olarak eklenecek -->
-        </div>
-        <!-- Playlist Ekle/Düzenle Formu (admin için) -->
-        <div class="p-3 p-md-4" id="playlistFormSection" style="display:none;">
-          <form id="mainPlaylistForm">
-            <input type="hidden" id="mainPlaylistId" value="">
-            <div class="mb-3">
-              <label for="mainPlaylistTitle" class="form-label">
-                <i class="fas fa-heading me-2"></i>Playlist Başlığı
-              </label>
-              <input type="text" class="form-control" id="mainPlaylistTitle" placeholder="Playlist başlığını girin" required>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showHome()">
+                            <i class="fas fa-home me-1"></i>Ana Sayfa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showAbout()">
+                            <i class="fas fa-user me-1"></i>Hakkında
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="theme-toggle" onclick="toggleTheme()">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="admin-toggle" id="adminToggle" title="Admin Girişi">
+                            <i class="fas fa-user-shield"></i>
+                        </button>
+                    </li>
+                </ul>
             </div>
-            <div class="mb-3">
-              <label for="mainPlaylistDescription" class="form-label">
-                <i class="fas fa-align-left me-2"></i>Açıklama
-              </label>
-              <textarea class="form-control" id="mainPlaylistDescription" rows="3" placeholder="Playlist açıklaması (opsiyonel)"></textarea>
-            </div>
-            <div class="mb-3">
-              <label for="mainSpotifyUrl" class="form-label">
-                <i class="fab fa-spotify me-2"></i>Spotify Playlist URL
-              </label>
-              <input type="url" class="form-control" id="mainSpotifyUrl" placeholder="https://open.spotify.com/playlist/..." required>
-            </div>
-            <div class="d-flex flex-column flex-sm-row gap-2">
-              <button type="submit" class="btn btn-primary flex-fill">
-                <i class="fas fa-save me-2"></i>Kaydet
-              </button>
-              <button type="button" class="btn btn-secondary flex-fill" id="cancelPlaylistFormBtn">
-                <i class="fas fa-times me-2"></i>İptal
-              </button>
-            </div>
-          </form>
         </div>
-      </div>
-    </div>
-    
+    </nav>
 
-  </div>
+    <!-- Main Content -->
+    <div class="container mt-5 pt-5">
+        <!-- Hero Section -->
+        <div class="hero-section text-center">
+            <h1 class="hero-title">
+                <i class="fas fa-pen me-3"></i>
+                kısaveözkoca
+            </h1>
+            <p class="hero-subtitle">Havadan Sudan Biraz da Benden Fikirler - kısaveözkoca</p>
+        </div>
 
-  <!-- Stats Section -->
-  <div class="stats">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="stat-item">
-            <div class="stat-number" id="totalPosts">0</div>
-            <div class="stat-label">Toplam Yazı</div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-item">
-            <div class="stat-number" id="totalComments">0</div>
-            <div class="stat-label">Toplam Yorum</div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-item">
-            <div class="stat-number" id="todayPosts">0</div>
-            <div class="stat-label">Bugünkü Yazılar</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Contact Section -->
-  <div class="contact-section">
-    <div class="container">
-      <div class="contact-card">
-        <div class="contact-header">
-          <h2><i class="fas fa-envelope me-2"></i>Benimle İletişime Geç</h2>
-          <p>Düşüncelerinizi paylaşın, sorularınızı sorun veya sadece merhaba deyin!</p>
-        </div>
-        <div class="contact-body">
-          <form id="contactForm">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="contactName" class="form-label">
-                    <i class="fas fa-user me-2"></i>Ad Soyad
-                  </label>
-                  <input type="text" class="form-control" id="contactName" placeholder="Adınız ve soyadınız" required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="contactEmail" class="form-label">
-                    <i class="fas fa-envelope me-2"></i>E-posta
-                  </label>
-                  <input type="email" class="form-control" id="contactEmail" placeholder="ornek@email.com" required>
-                </div>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="contactMessage" class="form-label">
-                <i class="fas fa-comment me-2"></i>Mesajınız
-              </label>
-              <textarea class="form-control" id="contactMessage" rows="5" placeholder="Mesajınızı buraya yazın..." required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-paper-plane me-2"></i>Mesaj Gönder
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Admin Login Modal -->
-  <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="adminLoginModalLabel">
-            <i class="fas fa-crown me-2"></i>Admin Girişi
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="adminLoginForm">
-            <div class="mb-3">
-              <label for="adminEmail" class="form-label">
-                <i class="fas fa-envelope me-2"></i>E-posta
-              </label>
-              <input type="email" class="form-control" id="adminEmail" placeholder="admin@example.com" required>
-            </div>
-            <div class="mb-3">
-              <label for="adminPassword" class="form-label">
-                <i class="fas fa-key me-2"></i>Şifre
-              </label>
-              <input type="password" class="form-control" id="adminPassword" placeholder="Şifrenizi girin" required>
-            </div>
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Admin için Mesajlar Butonu -->
-  <button id="showMessagesBtn" class="btn btn-primary" style="display:none; position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
-    <i class="fas fa-envelope"></i> Mesajlar
-  </button>
-
-  <!-- Mesajlar Modalı -->
-  <div class="modal fade" id="messagesModal" tabindex="-1" aria-labelledby="messagesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="messagesModalLabel"><i class="fas fa-envelope me-2"></i>Gelen Mesajlar</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="messagesList">
-          <div class="text-center text-muted">Yükleniyor...</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Load scripts at the end for better performance -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="supabase.js"></script>
-  <script src="app.js"></script>
-  <script>
-    // Inline critical JavaScript for faster loading
-    let isAdmin = false;
-    window.isAdmin = false;
-    
-    // Initialize Supabase immediately
-    const supabaseClient = supabase.createClient(
-      'https://xdjyeicdaemdjqntdwsy.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
-    );
-    
-    // Load posts with comments
-    async function loadPostsWithComments() {
-      try {
-        console.log('Loading posts with comments...');
-        const { data, error } = await supabaseClient
-          .from('posts')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        console.log('Posts data:', data);
-        const container = document.getElementById('postsContainer');
-        console.log('Container element:', container);
-        
-        if (data && data.length > 0) {
-          container.innerHTML = data.map(post => `
-            <div class="post-card" data-post-id="${post.id}">
-              <div class="post-header">
-                <h3 class="post-title">${post.title}</h3>
-                <small class="text-muted">${new Date(post.created_at).toLocaleDateString('tr-TR')}</small>
-                ${window.isAdmin ? `<button class="btn btn-danger btn-sm ms-2" onclick="deletePost(${post.id})"><i class="fas fa-trash"></i></button>` : ''}
-              </div>
-              <div class="post-content">${post.content.replace(/\n/g, '<br>')}</div>
-              
-              <!-- Comments Section -->
-              <div class="comments-section">
-                <h4 class="comments-title">
-                  <i class="fas fa-comments"></i>
-                  Yorumlar (${post.comments ? post.comments.length : 0})
-                </h4>
-                
-                <!-- Comments List -->
-                <div class="comments-list" id="comments-${post.id}">
-                  ${renderComments(post.comments || [])}
-                </div>
-                
-                <!-- Comment Form -->
-                <div class="comment-form">
-                  <h5><i class="fas fa-edit"></i>Yorum Yap</h5>
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="comment-name-${post.id}" placeholder="Adınız ve soyadınız" required style="width: 100%; margin-bottom: 10px;">
-                    <textarea class="form-control" id="comment-text-${post.id}" placeholder="Düşüncelerinizi paylaşın..." rows="3" required style="width: 100%; margin-bottom: 10px;"></textarea>
-                    <button class="btn btn-outline-secondary" onclick="addComment(${post.id})" style="align-self: flex-end;">
-                      <i class="fas fa-paper-plane"></i> Yorum Yap
+        <!-- Content Area -->
+        <div id="content">
+            <!-- Admin Post Form (Hidden by default) -->
+            <div class="post-form-card" id="adminPostForm" style="display: none;">
+                <h5 class="post-form-header">
+                    <i class="fas fa-edit me-2"></i>
+                    Yönetici Paneli - Fikrinizi Paylaşın
+                    <span class="admin-badge">
+                        <i class="fas fa-crown me-1"></i>ADMIN
+                    </span>
+                    <button class="btn btn-outline-light btn-sm ms-auto" id="logoutBtn" title="Çıkış Yap">
+                        <i class="fas fa-sign-out-alt"></i>
                     </button>
-                  </div>
+                </h5>
+                <div class="card-body p-4">
+                    <form id="postForm">
+                        <div class="mb-3">
+                            <label for="postTitle" class="form-label">
+                                <i class="fas fa-heading me-2"></i>Başlık
+                            </label>
+                            <input type="text" class="form-control" id="postTitle" placeholder="Fikriniz ne hakkında?" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="postContent" class="form-label">
+                                <i class="fas fa-align-left me-2"></i>Düşünceleriniz
+                            </label>
+                            <textarea class="form-control" id="postContent" rows="8" placeholder="Yaratıcı düşüncelerinizi, içgörülerinizi veya fikirlerinizi paylaşın...&#10;&#10;Paragraf ayrımlarınız korunacaktır." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Yazıyı Yayınla
+                        </button>
+                    </form>
                 </div>
-              </div>
             </div>
-          `).join('');
-        } else {
-          container.innerHTML = '<div class="empty-state"><i class="fas fa-pen"></i><h4>Henüz yazı yok</h4></div>';
-        }
-      } catch (error) {
-        console.error('Load posts error:', error);
-      }
-    }
-    
-    // Render comments
-    function renderComments(comments) {
-      console.log('Rendering comments:', comments);
-      if (!comments || comments.length === 0) {
-        return '<div class="text-muted">Henüz yorum yok. İlk yorumu siz yapın!</div>';
-      }
-      
-      return comments.map(comment => `
-        <div class="comment-item" data-comment-id="${comment.id}">
-          <div class="comment-header">
-            <strong>${comment.name}</strong>
-            <small class="text-muted">${comment.date}</small>
-            ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteComment(${comment.postId}, ${comment.id})"><i class="fas fa-trash"></i></a>` : ''}
-          </div>
-          <div class="comment-text">${comment.text}</div>
-          
-          <!-- Reply Button -->
-          <div class="comment-actions">
-            <a href="#" class="reply-btn" onclick="showReplyForm(event, ${comment.id})">
-              <i class="fas fa-reply"></i> Yanıtla
-            </a>
-          </div>
-          
-          <!-- Reply Form (Hidden by default) -->
-          <div class="reply-form" id="reply-form-${comment.id}" style="display: none;">
-            <div class="input-group">
-              <input id="reply-name-${comment.id}" placeholder="Adınız ve soyadınız" required>
-              <textarea id="reply-text-${comment.id}" placeholder="Yanıtınızı yazın..." required></textarea>
-              <button class="btn btn-outline-secondary" onclick="addReply(${comment.postId}, ${comment.id})">
-                <i class="fas fa-paper-plane"></i> Yanıtla
-              </button>
+
+            <!-- Posts Container -->
+            <div id="postsContainer" class="mt-4">
+                <!-- Yazılar buraya dinamik olarak eklenecek -->
             </div>
-          </div>
-          
-          <!-- Replies Section -->
-          ${renderReplies(comment.replies || [], comment.id)}
+
+            <!-- Stats Section -->
+            <div class="stats">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stat-item">
+                                <div class="stat-number" id="totalPosts">0</div>
+                                <div class="stat-label">Toplam Yazı</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-item">
+                                <div class="stat-number" id="totalComments">0</div>
+                                <div class="stat-label">Toplam Yorum</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-item">
+                                <div class="stat-number" id="todayPosts">0</div>
+                                <div class="stat-label">Bugünkü Yazılar</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playlist Önerisi Ana Sayfa -->
+            <div class="about-box playlist-about-box">
+                <div class="about-box-title playlist-title-accent">
+                    <i class="fas fa-music"></i> Playlistler
+                </div>
+                <div class="playlist-card" style="box-shadow:none; background:transparent; border:none; padding:0;">
+                    <div class="playlist-header d-none"></div>
+                    <div class="playlist-container" id="mainPlaylistContainer">
+                        <!-- Playlist'ler buraya dinamik olarak eklenecek -->
+                    </div>
+                    <div class="p-3 p-md-4" id="playlistFormSection" style="display:none;">
+                        <form id="mainPlaylistForm">
+                            <input type="hidden" id="mainPlaylistId" value="">
+                            <div class="mb-3">
+                                <label for="mainPlaylistTitle" class="form-label">
+                                    <i class="fas fa-heading me-2"></i>Playlist Başlığı
+                                </label>
+                                <input type="text" class="form-control" id="mainPlaylistTitle" placeholder="Playlist başlığını girin" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="mainPlaylistDescription" class="form-label">
+                                    <i class="fas fa-align-left me-2"></i>Açıklama
+                                </label>
+                                <textarea class="form-control" id="mainPlaylistDescription" rows="3" placeholder="Playlist açıklaması (opsiyonel)"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="mainSpotifyUrl" class="form-label">
+                                    <i class="fab fa-spotify me-2"></i>Spotify Playlist URL
+                                </label>
+                                <input type="url" class="form-control" id="mainSpotifyUrl" placeholder="https://open.spotify.com/playlist/..." required>
+                            </div>
+                            <div class="d-flex flex-column flex-sm-row gap-2">
+                                <button type="submit" class="btn btn-primary flex-fill">
+                                    <i class="fas fa-save me-2"></i>Kaydet
+                                </button>
+                                <button type="button" class="btn btn-secondary flex-fill" id="cancelPlaylistFormBtn">
+                                    <i class="fas fa-times me-2"></i>İptal
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="about-box contact-about-box">
+                <div class="about-box-title contact-title-accent">
+                    <i class="fas fa-envelope"></i> Benimle İletişime Geç
+                </div>
+                <div class="contact-card" style="box-shadow:none; background:transparent; border:none; padding:0;">
+                    <div class="contact-header d-none"></div>
+                    <div class="contact-body" style="padding:0;">
+                        <p style="color:#444; font-size:1.1rem; margin-bottom:24px;">Düşüncelerinizi paylaşın, sorunuzu sorun veya sadece merhaba deyin!</p>
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="contactName" class="form-label">
+                                            <i class="fas fa-user me-2"></i>Ad Soyad
+                                        </label>
+                                        <input type="text" class="form-control" id="contactName" placeholder="Adınız ve soyadınız" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="contactEmail" class="form-label">
+                                            <i class="fas fa-envelope me-2"></i>E-posta
+                                        </label>
+                                        <input type="email" class="form-control" id="contactEmail" placeholder="ornek@email.com" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contactMessage" class="form-label">
+                                    <i class="fas fa-comment me-2"></i>Mesajınız
+                                </label>
+                                <textarea class="form-control" id="contactMessage" rows="5" placeholder="Mesajınızı buraya yazın..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Mesaj Gönder
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-      `).join('');
-    }
-    
-    // Render replies
-    function renderReplies(replies, commentId) {
-      if (!replies || replies.length === 0) {
-        return '';
-      }
-      
-      return `
-        <div class="replies-section">
-          ${replies.map(reply => `
-            <div class="reply-item" data-reply-id="${reply.id}">
-              <div class="reply-header">
-                <strong>${reply.name}</strong>
-                <small class="text-muted">${reply.date}</small>
-                ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteReply(${reply.postId}, ${commentId}, ${reply.id})"><i class="fas fa-trash"></i></a>` : ''}
-              </div>
-              <div class="reply-text">${reply.text}</div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content admin-login-card">
+                <div class="admin-login-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-shield me-2"></i>Admin Girişi
+                        <span class="admin-badge">Yönetici</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="adminLoginForm">
+                        <div class="mb-3">
+                            <label for="adminEmail" class="form-label">E-posta</label>
+                            <input type="email" class="form-control" id="adminEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminPassword" class="form-label">Şifre</label>
+                            <input type="password" class="form-control" id="adminPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                        </button>
+                    </form>
+                </div>
             </div>
-          `).join('')}
         </div>
-      `;
-    }
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="app.js"></script>
     
-    // Add comment
-    async function addComment(postId) {
-      const nameInput = document.getElementById(`comment-name-${postId}`);
-      const textInput = document.getElementById(`comment-text-${postId}`);
-      
-      const name = nameInput.value.trim();
-      const text = textInput.value.trim();
-      
-      if (!name || !text) {
-        alert('Lütfen adınızı ve yorumunuzu girin!');
-        return;
-      }
-      
-      try {
-        await window.blogService.addComment(postId, { name, text });
-        nameInput.value = '';
-        textInput.value = '';
-        loadPostsWithComments(); // Reload posts to show new comment
-        alert('Yorumunuz başarıyla eklendi!');
-      } catch (error) {
-        console.error('Add comment error:', error);
-        alert('Yorum eklenirken hata oluştu: ' + error.message);
-      }
-    }
-    
-    // Add reply
-    async function addReply(postId, commentId) {
-      const nameInput = document.getElementById(`reply-name-${commentId}`);
-      const textInput = document.getElementById(`reply-text-${commentId}`);
-      
-      const name = nameInput.value.trim();
-      const text = textInput.value.trim();
-      
-      if (!name || !text) {
-        alert('Lütfen adınızı ve yanıtınızı girin!');
-        return;
-      }
-      
-      try {
-        await window.blogService.addReply(postId, commentId, { name, text });
-        nameInput.value = '';
-        textInput.value = '';
-        hideReplyForm(commentId);
-        loadPostsWithComments(); // Reload posts to show new reply
-        alert('Yanıtınız başarıyla eklendi!');
-      } catch (error) {
-        console.error('Add reply error:', error);
-        alert('Yanıt eklenirken hata oluştu: ' + error.message);
-      }
-    }
-    
-    // Show reply form
-    function showReplyForm(event, commentId) {
-      if (event) event.preventDefault();
-      const replyForm = document.getElementById(`reply-form-${commentId}`);
-      if (replyForm) {
-        replyForm.style.display = 'block';
-      }
-    }
-    
-    // Hide reply form
-    function hideReplyForm(commentId) {
-      const replyForm = document.getElementById(`reply-form-${commentId}`);
-      if (replyForm) {
-        replyForm.style.display = 'none';
-      }
-    }
-    
-    // Delete comment (admin only)
-    async function deleteComment(postId, commentId) {
-      if (!window.isAdmin) return;
-      
-      if (confirm('Bu yorumu silmek istediğinizden emin misiniz?')) {
-        try {
-          await window.blogService.deleteComment(postId, commentId);
-          loadPostsWithComments();
-          alert('Yorum silindi!');
-        } catch (error) {
-          console.error('Delete comment error:', error);
-          alert('Yorum silinirken hata oluştu: ' + error.message);
+    <script>
+        // Global functions for navigation
+        function showHome() {
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector('.nav-link[onclick="showHome()"]').classList.add('active');
+            loadPostsWithComments();
         }
-      }
-    }
-    
-    // Delete reply (admin only)
-    async function deleteReply(postId, commentId, replyId) {
-      if (!window.isAdmin) return;
-      
-      if (confirm('Bu yanıtı silmek istediğinizden emin misiniz?')) {
-        try {
-          await window.blogService.deleteReply(postId, commentId, replyId);
-          loadPostsWithComments();
-          alert('Yanıt silindi!');
-        } catch (error) {
-          console.error('Delete reply error:', error);
-          alert('Yanıt silinirken hata oluştu: ' + error.message);
-        }
-      }
-    }
-    
-    // Delete post (admin only)
-    async function deletePost(postId) {
-      if (!window.isAdmin) return;
-      
-      if (confirm('Bu yazıyı silmek istediğinizden emin misiniz?')) {
-        try {
-          await window.blogService.deletePost(postId);
-          loadPostsWithComments();
-          alert('Yazı silindi!');
-        } catch (error) {
-          console.error('Delete post error:', error);
-          alert('Yazı silinirken hata oluştu: ' + error.message);
-        }
-      }
-    }
-    
-    // Load playlists immediately
-    async function loadPlaylistsFast() {
-      try {
-        const { data, error } = await supabaseClient
-          .from('playlists')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(4); // Only load first 4 playlists initially
         
-        const container = document.getElementById('mainPlaylistContainer');
-        if (data && data.length > 0) {
-          container.innerHTML = data.map(playlist => `
-            <div class="playlist-item">
-              <div class="playlist-content">
-                <div class="playlist-item-header">
-                  <div class="playlist-icon"><i class="fab fa-spotify"></i></div>
-                  <div class="playlist-title">${playlist.title || 'Spotify Playlist'}</div>
+        function showAbout() {
+            window.location.href = 'about.html';
+        }
+        
+        function toggleTheme() {
+            if (window.themeManager) {
+                window.themeManager.toggle();
+            } else {
+                // Fallback
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                const icon = document.querySelector('.theme-toggle i');
+                icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+        
+        // Load posts with comments
+        async function loadPostsWithComments() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                const container = document.getElementById('postsContainer');
+                
+                if (data && data.length > 0) {
+                    container.innerHTML = data.map(post => `
+                        <div class="post-card" data-post-id="${post.id}">
+                            <div class="post-header">
+                                <h3 class="post-title">${post.title}</h3>
+                                <small class="text-muted">${new Date(post.created_at).toLocaleDateString('tr-TR')}</small>
+                                ${window.isAdmin ? `<button class="btn btn-danger btn-sm ms-2" onclick="deletePost(${post.id})"><i class="fas fa-trash"></i></button>` : ''}
+                            </div>
+                            <div class="post-content">${post.content.replace(/\n/g, '<br>')}</div>
+                            
+                            <!-- Comments Section -->
+                            <div class="comments-section">
+                                <h4 class="comments-title">
+                                    <i class="fas fa-comments"></i>
+                                    Yorumlar (${post.comments ? post.comments.length : 0})
+                                </h4>
+                                
+                                <!-- Comments List -->
+                                <div class="comments-list" id="comments-${post.id}">
+                                    ${renderComments(post.comments || [])}
+                                </div>
+                                
+                                <!-- Comment Form -->
+                                <div class="comment-form">
+                                    <h5><i class="fas fa-edit"></i>Yorum Yap</h5>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="comment-name-${post.id}" placeholder="Adınız ve soyadınız" required style="width: 100%; margin-bottom: 10px;">
+                                        <textarea class="form-control" id="comment-text-${post.id}" placeholder="Düşüncelerinizi paylaşın..." rows="3" required style="width: 100%; margin-bottom: 10px;"></textarea>
+                                        <button class="btn btn-outline-secondary" onclick="addComment(${post.id})" style="align-self: flex-end;">
+                                            <i class="fas fa-paper-plane"></i> Yorum Yap
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-pen"></i><h4>Henüz yazı yok</h4></div>';
+                }
+                
+                // Update stats
+                updateStats();
+            } catch (error) {
+                console.error('Load posts error:', error);
+                document.getElementById('postsContainer').innerHTML = '<div class="alert alert-danger">Yazılar yüklenirken hata oluştu: ' + error.message + '</div>';
+            }
+        }
+        
+        // Render comments
+        function renderComments(comments) {
+            if (!comments || comments.length === 0) {
+                return '<div class="text-muted">Henüz yorum yok. İlk yorumu siz yapın!</div>';
+            }
+            
+            return comments.map(comment => `
+                <div class="comment-item" data-comment-id="${comment.id}">
+                    <div class="comment-header">
+                        <strong>${comment.name}</strong>
+                        <small class="text-muted">${comment.date}</small>
+                        ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteComment(${comment.postId}, ${comment.id})"><i class="fas fa-trash"></i></a>` : ''}
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                    
+                    <!-- Reply Button -->
+                    <div class="comment-actions">
+                        <a href="#" class="reply-btn" onclick="showReplyForm(event, ${comment.id})">
+                            <i class="fas fa-reply"></i> Yanıtla
+                        </a>
+                    </div>
+                    
+                    <!-- Reply Form (Hidden by default) -->
+                    <div class="reply-form" id="reply-form-${comment.id}" style="display: none;">
+                        <div class="input-group">
+                            <input id="reply-name-${comment.id}" placeholder="Adınız ve soyadınız" required>
+                            <textarea id="reply-text-${comment.id}" placeholder="Yanıtınızı yazın..." required></textarea>
+                            <button class="btn btn-outline-secondary" onclick="addReply(${comment.postId}, ${comment.id})">
+                                <i class="fas fa-paper-plane"></i> Yanıtla
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Replies Section -->
+                    ${renderReplies(comment.replies || [], comment.id)}
                 </div>
-                <div class="playlist-description">${playlist.description || ''}</div>
-                <a href="${playlist.spotify_url}" class="spotify-link" target="_blank">
-                  <i class="fab fa-spotify me-2"></i>Spotify'da Dinle
-                </a>
-              </div>
-            </div>
-          `).join('');
-        } else {
-          container.innerHTML = '<div class="text-muted p-4">Henüz bir playlist eklenmedi.</div>';
+            `).join('');
         }
-      } catch (error) {
-        console.error('Fast playlist load error:', error);
-      }
-    }
-    
-    // İstatistikleri güncelle
-    async function updateStats() {
-      const { data: posts, error } = await supabaseClient
-        .from('posts')
-        .select('id, created_at, comments');
-
-      if (error) {
-        console.error('İstatistikler alınamadı:', error);
-        return;
-      }
-
-      // Toplam yazı
-      document.getElementById('totalPosts').textContent = posts.length;
-
-      // Toplam yorum
-      let totalComments = 0;
-      posts.forEach(post => {
-        if (Array.isArray(post.comments)) {
-          totalComments += post.comments.length;
+        
+        // Render replies
+        function renderReplies(replies, commentId) {
+            if (!replies || replies.length === 0) {
+                return '';
+            }
+            
+            return `
+                <div class="replies-section">
+                    ${replies.map(reply => `
+                        <div class="reply-item" data-reply-id="${reply.id}">
+                            <div class="reply-header">
+                                <strong>${reply.name}</strong>
+                                <small class="text-muted">${reply.date}</small>
+                                ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteReply(${reply.postId}, ${commentId}, ${reply.id})"><i class="fas fa-trash"></i></a>` : ''}
+                            </div>
+                            <div class="reply-text">${reply.text}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
-      });
-      document.getElementById('totalComments').textContent = totalComments;
+        
+        // Add comment
+        async function addComment(postId) {
+            const nameInput = document.getElementById(`comment-name-${postId}`);
+            const textInput = document.getElementById(`comment-text-${postId}`);
+            
+            const name = nameInput.value.trim();
+            const text = textInput.value.trim();
+            
+            if (!name || !text) {
+                alert('Lütfen adınızı ve yorumunuzu girin!');
+                return;
+            }
+            
+            try {
+                await window.blogService.addComment(postId, { name, text });
+                nameInput.value = '';
+                textInput.value = '';
+                loadPostsWithComments();
+                alert('Yorumunuz başarıyla eklendi!');
+            } catch (error) {
+                console.error('Add comment error:', error);
+                alert('Yorum eklenirken hata oluştu: ' + error.message);
+            }
+        }
+        
+        // Add reply
+        async function addReply(postId, commentId) {
+            const nameInput = document.getElementById(`reply-name-${commentId}`);
+            const textInput = document.getElementById(`reply-text-${commentId}`);
+            
+            const name = nameInput.value.trim();
+            const text = textInput.value.trim();
+            
+            if (!name || !text) {
+                alert('Lütfen adınızı ve yanıtınızı girin!');
+                return;
+            }
+            
+            try {
+                await window.blogService.addReply(postId, commentId, { name, text });
+                nameInput.value = '';
+                textInput.value = '';
+                hideReplyForm(commentId);
+                loadPostsWithComments();
+                alert('Yanıtınız başarıyla eklendi!');
+            } catch (error) {
+                console.error('Add reply error:', error);
+                alert('Yanıt eklenirken hata oluştu: ' + error.message);
+            }
+        }
+        
+        // Show reply form
+        function showReplyForm(event, commentId) {
+            if (event) event.preventDefault();
+            const replyForm = document.getElementById(`reply-form-${commentId}`);
+            if (replyForm) {
+                replyForm.style.display = 'block';
+            }
+        }
+        
+        // Hide reply form
+        function hideReplyForm(commentId) {
+            const replyForm = document.getElementById(`reply-form-${commentId}`);
+            if (replyForm) {
+                replyForm.style.display = 'none';
+            }
+        }
+        
+        // Delete comment (admin only)
+        async function deleteComment(postId, commentId) {
+            if (!window.isAdmin) return;
+            
+            if (confirm('Bu yorumu silmek istediğinizden emin misiniz?')) {
+                try {
+                    await window.blogService.deleteComment(postId, commentId);
+                    loadPostsWithComments();
+                    alert('Yorum silindi!');
+                } catch (error) {
+                    console.error('Delete comment error:', error);
+                    alert('Yorum silinirken hata oluştu: ' + error.message);
+                }
+            }
+        }
+        
+        // Delete reply (admin only)
+        async function deleteReply(postId, commentId, replyId) {
+            if (!window.isAdmin) return;
+            
+            if (confirm('Bu yanıtı silmek istediğinizden emin misiniz?')) {
+                try {
+                    await window.blogService.deleteReply(postId, commentId, replyId);
+                    loadPostsWithComments();
+                    alert('Yanıt silindi!');
+                } catch (error) {
+                    console.error('Delete reply error:', error);
+                    alert('Yanıt silinirken hata oluştu: ' + error.message);
+                }
+            }
+        }
+        
+        // Delete post (admin only)
+        async function deletePost(postId) {
+            if (!window.isAdmin) return;
+            
+            if (confirm('Bu yazıyı silmek istediğinizden emin misiniz?')) {
+                try {
+                    await window.blogService.deletePost(postId);
+                    loadPostsWithComments();
+                    alert('Yazı silindi!');
+                } catch (error) {
+                    console.error('Delete post error:', error);
+                    alert('Yazı silinirken hata oluştu: ' + error.message);
+                }
+            }
+        }
+        
+        // Update stats
+        async function updateStats() {
+            try {
+                const { data: posts, error } = await window.supabaseClient
+                    .from('posts')
+                    .select('id, created_at, comments');
 
-      // Bugünkü yazılar
-      const today = new Date().toISOString().slice(0, 10);
-      const todayPosts = posts.filter(post => post.created_at && post.created_at.slice(0, 10) === today);
-      document.getElementById('todayPosts').textContent = todayPosts.length;
-    }
+                if (error) {
+                    console.error('İstatistikler alınamadı:', error);
+                    return;
+                }
 
-    // Initialize theme and admin state
-    document.addEventListener('DOMContentLoaded', function() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      
-      // Set global admin state
-      window.isAdmin = false;
-      
-      // Load content immediately
-      loadPostsWithComments();
-      loadPlaylistsFast();
-      updateStats(); // Call updateStats on page load
-      
-      // Theme toggle
-      const themeToggle = document.getElementById('themeToggle');
-      if (themeToggle) {
-        themeToggle.addEventListener('click', function() {
-          const currentTheme = document.documentElement.getAttribute('data-theme');
-          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-          document.documentElement.setAttribute('data-theme', newTheme);
-          localStorage.setItem('theme', newTheme);
-          
-          const icon = themeToggle.querySelector('i');
-          icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                // Toplam yazı
+                document.getElementById('totalPosts').textContent = posts.length;
+
+                // Toplam yorum
+                let totalComments = 0;
+                posts.forEach(post => {
+                    if (Array.isArray(post.comments)) {
+                        totalComments += post.comments.length;
+                    }
+                });
+                document.getElementById('totalComments').textContent = totalComments;
+
+                // Bugünkü yazılar
+                const today = new Date().toISOString().slice(0, 10);
+                const todayPosts = posts.filter(post => post.created_at && post.created_at.slice(0, 10) === today);
+                document.getElementById('todayPosts').textContent = todayPosts.length;
+            } catch (error) {
+                console.error('Stats update error:', error);
+            }
+        }
+        
+        // Load playlists
+        async function loadPlaylists() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('playlists')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(4);
+                
+                const container = document.getElementById('mainPlaylistContainer');
+                if (data && data.length > 0) {
+                    container.innerHTML = data.map(playlist => `
+                        <div class="playlist-item">
+                            <div class="playlist-content">
+                                <div class="playlist-item-header">
+                                    <div class="playlist-icon"><i class="fab fa-spotify"></i></div>
+                                    <div class="playlist-title">${playlist.title || 'Spotify Playlist'}</div>
+                                </div>
+                                <div class="playlist-description">${playlist.description || ''}</div>
+                                <a href="${playlist.spotify_url}" class="spotify-link" target="_blank">
+                                    <i class="fab fa-spotify me-2"></i>Spotify'da Dinle
+                                </a>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="text-muted p-4">Henüz bir playlist eklenmedi.</div>';
+                }
+            } catch (error) {
+                console.error('Load playlists error:', error);
+            }
+        }
+        
+        // Contact form handler
+        async function handleContactForm(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const message = document.getElementById('contactMessage').value;
+            
+            try {
+                await window.supabaseClient
+                    .from('contact_messages')
+                    .insert([{
+                        name: name,
+                        email: email,
+                        message: message,
+                        created_at: new Date().toISOString()
+                    }]);
+                
+                alert('Mesajınız başarıyla gönderildi!');
+                document.getElementById('contactForm').reset();
+            } catch (error) {
+                console.error('Contact form error:', error);
+                alert('Mesaj gönderilirken hata oluştu: ' + error.message);
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            
+            // Load theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Test if supabase is loaded
+            if (typeof window.supabaseClient === 'undefined') {
+                console.error('Supabase client not loaded!');
+                document.getElementById('postsContainer').innerHTML = '<div class="alert alert-danger">Supabase bağlantısı kurulamadı!</div>';
+                return;
+            }
+            
+            console.log('Supabase client loaded, loading posts...');
+            
+            // Load posts
+            loadPostsWithComments();
+            
+            // Load playlists
+            loadPlaylists();
+            
+            // Add contact form handler
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', handleContactForm);
+            }
+            
+            // Add post form handler (admin)
+            const postForm = document.getElementById('postForm');
+            if (postForm) {
+                postForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const title = document.getElementById('postTitle').value;
+                    const content = document.getElementById('postContent').value;
+                    
+                    try {
+                        await window.blogService.createPost({
+                            title: title,
+                            content: content,
+                            comments: []
+                        });
+                        
+                        alert('Yazı başarıyla eklendi!');
+                        postForm.reset();
+                        loadPostsWithComments();
+                    } catch (error) {
+                        console.error('Post creation error:', error);
+                        alert('Yazı eklenirken hata oluştu: ' + error.message);
+                    }
+                });
+            }
         });
-      }
-    });
-  </script>
-  
-  <style>
-    /* Yanıt stilleri */
-    .comment-actions {
-      margin-top: 8px;
-    }
-    
-    .reply-btn {
-      color: var(--text-light);
-      font-size: 0.85rem;
-      padding: 4px 8px;
-      text-decoration: none;
-    }
-    
-    .reply-btn:hover {
-      color: #667eea;
-      background-color: rgba(102, 126, 234, 0.1);
-      border-radius: 4px;
-    }
-    
-    .delete-btn {
-      color: #dc3545;
-      font-size: 0.85rem;
-      padding: 4px 8px;
-      text-decoration: none;
-    }
-    
-    .delete-btn:hover {
-      color: #c82333;
-      background-color: rgba(220, 53, 69, 0.1);
-      border-radius: 4px;
-    }
-    
-    .reply-form {
-      margin-top: 12px;
-      padding: 12px;
-      background-color: rgba(102, 126, 234, 0.05);
-      border-radius: 8px;
-      border-left: 3px solid #667eea;
-    }
-    
-    .replies-section {
-      margin-top: 12px;
-      margin-left: 20px;
-      padding-left: 15px;
-      border-left: 2px solid var(--border-color);
-    }
-    
-    .reply-item {
-      margin-bottom: 12px;
-      padding: 8px 12px;
-      background-color: rgba(102, 126, 234, 0.03);
-      border-radius: 6px;
-    }
-    
-    .reply-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-    
-    .reply-header strong {
-      font-size: 0.9rem;
-      color: var(--text-primary);
-    }
-    
-    .reply-header small {
-      font-size: 0.75rem;
-    }
-    
-    .reply-text {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-    
-    /* Dark mode için yanıt stilleri */
-    [data-theme="dark"] .reply-form {
-      background-color: rgba(102, 126, 234, 0.1);
-    }
-    
-    [data-theme="dark"] .reply-item {
-      background-color: rgba(102, 126, 234, 0.05);
-    }
-  </style>
+    </script>
 </body>
 </html> 

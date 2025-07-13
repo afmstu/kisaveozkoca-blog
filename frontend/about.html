@@ -25,11 +25,10 @@
 </head>
 <body>
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+  <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="index.html">
-        <i class="fas fa-pen me-2"></i>
-        kısaveözkoca
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-pen me-2"></i>kısaveözkoca
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
@@ -47,13 +46,13 @@
             </a>
           </li>
           <li class="nav-item">
-            <button class="theme-toggle" id="themeToggle" title="Karanlık Modu Aç/Kapat">
+            <button class="theme-toggle" onclick="toggleTheme()">
               <i class="fas fa-moon"></i>
             </button>
           </li>
           <li class="nav-item">
             <button class="admin-toggle" id="adminToggle" title="Admin Girişi">
-              <i class="fas fa-crown"></i>
+              <i class="fas fa-user-shield"></i>
             </button>
           </li>
         </ul>
@@ -65,17 +64,14 @@
 
   <div class="container" style="margin-top: 100px;">
     <!-- About Story -->
-    <div class="about-card" id="hikaye-section">
-      <div class="about-header">
-        <h2><i class="fas fa-heart me-2"></i>Arkasındaki Hikaye</h2>
-        <button class="btn btn-outline-light btn-sm ms-auto" id="editHikayeBtn" style="display: none;" title="Düzenle">
-          <i class="fas fa-edit"></i>
-        </button>
+    <div class="about-box" id="hikaye-section" style="background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 32px 24px; margin-bottom: 32px; border: 1.5px solid #ececec; position:relative;">
+      <div class="about-box-title" style="font-size: 1.25rem; font-weight: 600; color: #667eea; margin-bottom: 18px; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-heart"></i> Arkasındaki Hikaye
+        <button id="editHikayeBtn" class="btn btn-sm btn-outline-primary ms-auto" style="display:none; margin-left:auto;"><i class="fas fa-edit"></i> Düzenle</button>
       </div>
-      <div class="about-content" id="hikayeContent">
-        <p><strong>kısaveözkoca</strong>'ya hoş geldiniz - fikirlerin paylaşılmayı ve kutlanmayı hak ettiği basit inancından doğan bir platform. Burası fikirlerimin , düşüncelerimin sizlere özgürce aktığı bir alan olarak tasarlnadı. kısaveözkoca ile kendi fikirlerimi paylaşırken aynı zamanda başkalarına da ilham vermek istiyorum.</p>
-        
-        <p>Her fikir bir kıvılcımla başlar - bir netlik anı, ilham parıltısı veya peşinizi bırakmayan bir düşünce. Burası, o anları yakalamak veonlara bir yuva vermek için var.</p>
+      <div id="hikayeContent">
+        <p><strong>kısaveözkoca</strong>'ya hoş geldiniz - fikirlerin paylaşılmayı ve kutlanmayı hak ettiği basit inancından doğan bir platform. Burası fikirlerimin , düşüncelerimin sizlere özgürce aktığı bir alan olarak tasarlandı. kısaveözkoca ile kendi fikirlerimi paylaşırken aynı zamanda başkalarına da ilham vermek istiyorum.</p>
+        <p>Her fikir bir kıvılcımla başlar - bir netlik anı, ilham parıltısı veya peşinizi bırakmayan bir düşünce. Burası, o anları yakalamak ve onlara bir yuva vermek için var.</p>
       </div>
       
       <!-- Admin Edit Form (Hidden by default) -->
@@ -101,19 +97,16 @@
     </div>
 
     <!-- Ben Kimim? -->
-    <div class="about-card" id="ben-kimim">
-      <div class="about-header">
-        <h2><i class="fas fa-user me-2"></i>Ben Kimim?</h2>
-        <button class="btn btn-outline-light btn-sm ms-auto" id="editAboutBtn" style="display: none;" title="Düzenle">
-          <i class="fas fa-edit"></i>
-        </button>
+    <div class="about-box" id="ben-kimim" style="background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 32px 24px; margin-bottom: 32px; border: 1.5px solid #ececec; position:relative;">
+      <div class="about-box-title" style="font-size: 1.25rem; font-weight: 600; color: #667eea; margin-bottom: 18px; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-user"></i> Ben Kimim?
+        <button id="editAboutBtn" class="btn btn-sm btn-outline-primary ms-auto" style="display:none; margin-left:auto;"><i class="fas fa-edit"></i> Düzenle</button>
       </div>
-      <div class="about-content" id="aboutContent">
-        <p><strong>Günaydın, ben Mustafa!</strong> Ermenek doğumluyum ve şu anda Boğaziçi Üniversitesi İktisat 3. sınıfım.</p>
-        
-        <div class="social-links mt-4">
-          <a href="#" class="social-link linkedin" title="LinkedIn Profilim">
-            <i class="fab fa-linkedin"></i>
+      <div id="aboutContent">
+        <p><strong>Günaydın, ben Mustafa.</strong> Ermenek doğumluyum ve şu anda Boğaziçi Üniversitesi İktisat öğrencisiyim. Title'larım bu kadar. Genellikle çok gülerim; ancak son zamanlarda bu azaldı çünkü savunma mekanizmamı biraz değiştirip hayatı daha ciddiye almak istiyorum. Ciddiye almak yorucu olabilir ama, bence gülebilmek de yorucuydu. Bunların dışında podcast dinlemeyi çok seviyorum; yanında da kitap okumaya çalışıyorum. Yazmanın getirdiği okuma motivasyonumu korumak da burayı oluşturmamın sebeplerinden biri.</p>
+        <div style="margin-top: 18px;">
+          <a href="#" class="social-link linkedin" title="LinkedIn Profilim" style="display: inline-flex; align-items: center; gap: 8px; color: #0a66c2; font-weight: 500; text-decoration: none;">
+            <i class="fab fa-linkedin" style="font-size: 1.3rem;"></i>
             <span>LinkedIn</span>
           </a>
         </div>
@@ -146,6 +139,61 @@
       </div>
     </div>
 
+    <!-- Playlist Section (admin only) -->
+    <div class="about-box playlist-about-box" id="playlist-section">
+      <div class="about-box-title playlist-title-accent">
+        <i class="fas fa-music"></i> Playlistler
+        <button id="addPlaylistBtn" class="btn btn-sm btn-success ms-auto" style="display:none; margin-left:auto;"><i class="fas fa-plus"></i> Yeni Playlist</button>
+      </div>
+      <div class="playlist-card" style="box-shadow:none; background:transparent; border:none; padding:0;">
+        <div class="playlist-header d-none"></div>
+        <div class="playlist-container" id="mainPlaylistContainer">
+          <!-- Playlist'ler buraya dinamik olarak eklenecek -->
+        </div>
+        <div class="p-3 p-md-4" id="playlistFormSection" style="display:none;">
+          <form id="mainPlaylistForm">
+            <input type="hidden" id="mainPlaylistId" value="">
+            <div class="mb-3">
+              <label for="mainPlaylistTitle" class="form-label">
+                <i class="fas fa-heading me-2"></i>Playlist Başlığı
+              </label>
+              <input type="text" class="form-control" id="mainPlaylistTitle" placeholder="Playlist başlığını girin" required>
+            </div>
+            <div class="mb-3">
+              <label for="mainPlaylistDescription" class="form-label">
+                <i class="fas fa-align-left me-2"></i>Açıklama
+              </label>
+              <textarea class="form-control" id="mainPlaylistDescription" rows="3" placeholder="Playlist açıklaması (opsiyonel)"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="mainSpotifyUrl" class="form-label">
+                <i class="fab fa-spotify me-2"></i>Spotify Playlist URL
+              </label>
+              <input type="url" class="form-control" id="mainSpotifyUrl" placeholder="https://open.spotify.com/playlist/..." required>
+            </div>
+            <div class="d-flex flex-column flex-sm-row gap-2">
+              <button type="submit" class="btn btn-primary flex-fill">
+                <i class="fas fa-save me-2"></i>Kaydet
+              </button>
+              <button type="button" class="btn btn-secondary flex-fill" id="cancelPlaylistFormBtn">
+                <i class="fas fa-times me-2"></i>İptal
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gelen Mesajlar (sadece admin) -->
+    <div class="about-box" id="messages-box" style="background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 32px 24px; margin-bottom: 32px; border: 1.5px solid #ececec; display:none;">
+      <div class="about-box-title contact-title-accent">
+        <i class="fas fa-envelope-open-text"></i> Gelen Mesajlar
+      </div>
+      <div id="messagesList">
+        <div class="text-muted">Yükleniyor...</div>
+      </div>
+    </div>
+
     <!-- Call to Action -->
     <div class="text-center mb-5">
       <h3 class="text-white mb-4">Konuşmaya Katılmaya Hazır mısınız?</h3>
@@ -156,34 +204,29 @@
   </div>
 
   <!-- Admin Login Modal -->
-  <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
+  <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="adminLoginModalLabel">
-            <i class="fas fa-crown me-2"></i>Admin Girişi
+      <div class="modal-content admin-login-card">
+        <div class="admin-login-header">
+          <h5 class="mb-0">
+            <i class="fas fa-user-shield me-2"></i>Admin Girişi
+            <span class="admin-badge">Yönetici</span>
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body p-4">
           <form id="adminLoginForm">
             <div class="mb-3">
-              <label for="adminEmail" class="form-label">
-                <i class="fas fa-envelope me-2"></i>E-posta
-              </label>
-              <input type="email" class="form-control" id="adminEmail" placeholder="admin@example.com" required>
+              <label for="adminEmail" class="form-label">E-posta</label>
+              <input type="email" class="form-control" id="adminEmail" required>
             </div>
             <div class="mb-3">
-              <label for="adminPassword" class="form-label">
-                <i class="fas fa-key me-2"></i>Şifre
-              </label>
-              <input type="password" class="form-control" id="adminPassword" placeholder="Şifrenizi girin" required>
+              <label for="adminPassword" class="form-label">Şifre</label>
+              <input type="password" class="form-control" id="adminPassword" required>
             </div>
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
-              </button>
-            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+            </button>
           </form>
         </div>
       </div>
@@ -198,16 +241,13 @@
     let isAdmin = false;
     window.isAdmin = false;
     
-    // Initialize Supabase immediately
-    const supabaseClient = supabase.createClient(
-      'https://xdjyeicdaemdjqntdwsy.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
-    );
+    // Use global Supabase client from supabase.js
+    // No need to create a new client here
     
     // Load about content immediately
     async function loadAboutContentFast() {
       try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await window.supabaseClient
           .from('about')
           .select('*')
           .order('updated_at', { ascending: false })
@@ -237,28 +277,205 @@
       }
     }
     
-    // Initialize theme
+    // Initialize theme and content
     document.addEventListener('DOMContentLoaded', function() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
+      // Initialize theme manager if available
+      if (window.themeManager) {
+        window.themeManager.init();
+      } else {
+        // Fallback theme initialization
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Listen for theme changes from other tabs
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'theme') {
+            document.documentElement.setAttribute('data-theme', e.newValue || 'light');
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+              const icon = themeToggle.querySelector('i');
+              icon.className = (e.newValue || 'light') === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+          }
+        });
+      }
       
       // Load content immediately
       loadAboutContentFast();
-      
-      // Theme toggle
-      const themeToggle = document.getElementById('themeToggle');
-      if (themeToggle) {
-        themeToggle.addEventListener('click', function() {
-          const currentTheme = document.documentElement.getAttribute('data-theme');
-          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-          document.documentElement.setAttribute('data-theme', newTheme);
-          localStorage.setItem('theme', newTheme);
-          
-          const icon = themeToggle.querySelector('i');
-          icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        });
-      }
     });
   </script>
+  <script>
+async function checkAdminStatusOnLoad() {
+  if (!window.supabaseClient) return;
+  const { data: { user } } = await window.supabaseClient.auth.getUser();
+  if (user) {
+    const { data: adminData, error } = await window.supabaseClient
+      .from('admin_users')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+    if (!error && adminData && adminData.is_admin) {
+      window.isAdmin = true;
+      localStorage.setItem('isAdmin', 'true');
+    } else {
+      window.isAdmin = false;
+      localStorage.removeItem('isAdmin');
+    }
+  } else {
+    window.isAdmin = false;
+    localStorage.removeItem('isAdmin');
+  }
+  if (typeof window.showAdminUI === 'function') window.showAdminUI();
+}
+
+window.showAdminUI = function() {
+  const editHikayeBtn = document.getElementById('editHikayeBtn');
+  const editAboutBtn = document.getElementById('editAboutBtn');
+  const addPlaylistBtn = document.getElementById('addPlaylistBtn');
+  if (editHikayeBtn) editHikayeBtn.style.display = window.isAdmin ? 'inline-block' : 'none';
+  if (editAboutBtn) editAboutBtn.style.display = window.isAdmin ? 'inline-block' : 'none';
+  if (addPlaylistBtn) addPlaylistBtn.style.display = window.isAdmin ? 'inline-block' : 'none';
+  document.querySelectorAll('.delete-playlist-btn').forEach(btn => btn.style.display = window.isAdmin ? 'inline-block' : 'none');
+  const messagesBox = document.getElementById('messages-box');
+  if (messagesBox) messagesBox.style.display = window.isAdmin ? 'block' : 'none';
+  if (window.isAdmin) loadMessages();
+};
+
+async function loadMessages() {
+  const messagesList = document.getElementById('messagesList');
+  if (!messagesList) return;
+  messagesList.innerHTML = '<div class="text-muted">Yükleniyor...</div>';
+  const { data, error } = await window.supabaseClient.from('contact_messages').select('*').order('created_at', { ascending: false });
+  if (error) {
+    messagesList.innerHTML = '<div class="text-danger">Mesajlar yüklenemedi.</div>';
+    return;
+  }
+  if (!data || data.length === 0) {
+    messagesList.innerHTML = '<div class="text-muted">Hiç mesaj yok.</div>';
+    return;
+  }
+  messagesList.innerHTML = data.map(msg => `
+    <div class='mb-4 p-3 message-item' style='background:var(--message-bg); border:1px solid var(--message-border); border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.04);'>
+      <div style='font-weight:600; color:#667eea;'><i class='fas fa-user me-2'></i>${msg.name} <span style='color:var(--text-light); font-size:0.95em;'>(${msg.email})</span></div>
+      <div style='color:var(--text-secondary); margin:8px 0 4px 0;'>${msg.message}</div>
+      <div style='font-size:0.9em; color:var(--text-light);'>${new Date(msg.created_at).toLocaleString('tr-TR')}</div>
+    </div>
+  `).join('');
+}
+
+window.addEventListener('storage', window.showAdminUI);
+
+document.addEventListener('DOMContentLoaded', function() {
+  checkAdminStatusOnLoad();
+  // --- Hakkında kutuları düzenleme ---
+  const hikayeEditForm = document.getElementById('hikayeEditForm');
+  const aboutEditForm = document.getElementById('aboutEditForm');
+  const hikayeContent = document.getElementById('hikayeContent');
+  const aboutContent = document.getElementById('aboutContent');
+  const editHikayeBtn = document.getElementById('editHikayeBtn');
+  const editAboutBtn = document.getElementById('editAboutBtn');
+  if (editHikayeBtn) {
+    editHikayeBtn.onclick = function() {
+      hikayeEditForm.style.display = 'block';
+      document.getElementById('hikayeText').value = hikayeContent.innerText.trim();
+    };
+  }
+  if (editAboutBtn) {
+    editAboutBtn.onclick = function() {
+      aboutEditForm.style.display = 'block';
+      document.getElementById('aboutText').value = aboutContent.innerText.trim();
+      // LinkedIn url'ini de doldur
+      const link = aboutContent.querySelector('a.social-link');
+      if (link) document.getElementById('linkedinUrl').value = link.href;
+    };
+  }
+  // İptal butonları
+  const cancelHikayeEditBtn = document.getElementById('cancelHikayeEditBtn');
+  if (cancelHikayeEditBtn) cancelHikayeEditBtn.onclick = () => hikayeEditForm.style.display = 'none';
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+  if (cancelEditBtn) cancelEditBtn.onclick = () => aboutEditForm.style.display = 'none';
+  // Kaydet butonları
+  const hikayeForm = document.getElementById('hikayeForm');
+  if (hikayeForm) hikayeForm.onsubmit = async function(e) {
+    e.preventDefault();
+    const text = document.getElementById('hikayeText').value;
+    await window.supabaseClient.from('about').update({ hikaye: text, updated_at: new Date().toISOString() }).eq('id', 1);
+    hikayeContent.innerHTML = text.replace(/\n/g, '<br>');
+    hikayeEditForm.style.display = 'none';
+  };
+  const aboutForm = document.getElementById('aboutForm');
+  if (aboutForm) aboutForm.onsubmit = async function(e) {
+    e.preventDefault();
+    const text = document.getElementById('aboutText').value;
+    const linkedin = document.getElementById('linkedinUrl').value;
+    await window.supabaseClient.from('about').update({ content: text, linkedin_url: linkedin, updated_at: new Date().toISOString() }).eq('id', 1);
+    aboutContent.querySelector('p').innerText = text;
+    const link = aboutContent.querySelector('a.social-link');
+    if (link) link.href = linkedin;
+    aboutEditForm.style.display = 'none';
+  };
+  // --- Playlist işlemleri ---
+  function renderPlaylists(playlists) {
+    const container = document.getElementById('mainPlaylistContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    playlists.forEach(pl => {
+      const div = document.createElement('div');
+      div.className = 'playlist-item';
+      div.innerHTML = `
+        <div class="playlist-content">
+          <div class="playlist-item-header">
+            <div class="playlist-icon"><i class="fab fa-spotify"></i></div>
+            <div class="playlist-title">${pl.title || 'Spotify Playlist'}</div>
+            ${window.isAdmin ? `<button class='btn btn-danger btn-sm delete-playlist-btn' data-id='${pl.id}'><i class='fas fa-trash'></i></button>` : ''}
+          </div>
+          <div class="playlist-description">${pl.description || ''}</div>
+          <a href="${pl.spotify_url}" class="spotify-link" target="_blank">
+            <i class="fab fa-spotify me-2"></i>Spotify'da Dinle
+          </a>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+    // Silme butonlarına event ekle
+    if (window.isAdmin) {
+      document.querySelectorAll('.delete-playlist-btn').forEach(btn => {
+        btn.onclick = async function() {
+          if (confirm('Bu playlisti silmek istediğinizden emin misiniz?')) {
+            await window.supabaseClient.from('playlists').delete().eq('id', btn.dataset.id);
+            loadPlaylists();
+          }
+        };
+      });
+    }
+    window.showAdminUI();
+  }
+  async function loadPlaylists() {
+    const { data, error } = await window.supabaseClient.from('playlists').select('*').order('created_at', { ascending: false });
+    renderPlaylists(data || []);
+  }
+  const addPlaylistBtn = document.getElementById('addPlaylistBtn');
+  if (addPlaylistBtn) addPlaylistBtn.onclick = function() {
+    document.getElementById('playlistFormSection').style.display = 'block';
+  };
+  const cancelPlaylistFormBtn = document.getElementById('cancelPlaylistFormBtn');
+  if (cancelPlaylistFormBtn) cancelPlaylistFormBtn.onclick = function() {
+    document.getElementById('playlistFormSection').style.display = 'none';
+  };
+  const mainPlaylistForm = document.getElementById('mainPlaylistForm');
+  if (mainPlaylistForm) mainPlaylistForm.onsubmit = async function(e) {
+    e.preventDefault();
+    const title = document.getElementById('mainPlaylistTitle').value;
+    const description = document.getElementById('mainPlaylistDescription').value;
+    const url = document.getElementById('mainSpotifyUrl').value;
+    await window.supabaseClient.from('playlists').insert([{ title, description, spotify_url: url }]);
+    document.getElementById('playlistFormSection').style.display = 'none';
+    loadPlaylists();
+  };
+  loadPlaylists();
+});
+</script>
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
 </body>
 </html> 

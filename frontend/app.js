@@ -1,6 +1,92 @@
+// Theme management system
+window.themeManager = {
+  // Initialize theme
+  init() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    this.setTheme(savedTheme);
+    this.updateThemeIcon();
+    
+    // Listen for theme changes from other tabs
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'theme') {
+        this.setTheme(e.newValue || 'light');
+        this.updateThemeIcon();
+      }
+    });
+    
+    // Listen for theme change events
+    window.addEventListener('themeChanged', (e) => {
+      this.updateAboutBoxes(e.detail.theme);
+    });
+  },
+  
+  // Set theme
+  setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    
+    // Update CSS variables for about boxes
+    this.updateAboutBoxes(theme);
+    
+    // Dispatch custom event for other scripts
+    window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme } }));
+  },
+  
+  // Update about boxes based on theme
+  updateAboutBoxes(theme) {
+    const aboutBoxes = document.querySelectorAll('.about-box');
+    aboutBoxes.forEach(box => {
+      if (theme === 'dark') {
+        box.style.background = 'var(--about-box-bg)';
+        box.style.borderColor = 'var(--about-box-border)';
+      } else {
+        box.style.background = '#fff';
+        box.style.borderColor = '#ececec';
+      }
+    });
+    
+    // Update about box titles
+    const aboutTitles = document.querySelectorAll('.about-box-title');
+    aboutTitles.forEach(title => {
+      title.style.color = theme === 'dark' ? '#667eea' : '#5a4fcf';
+    });
+    
+    // Update contact text
+    const contactText = document.querySelector('.contact-about-box p');
+    if (contactText) {
+      contactText.style.color = theme === 'dark' ? 'var(--text-secondary)' : '#444';
+    }
+  },
+  
+  // Toggle theme
+  toggle() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    this.setTheme(newTheme);
+    this.updateThemeIcon();
+  },
+  
+  // Update theme icon
+  updateThemeIcon() {
+    const themeToggle = document.querySelector('.theme-toggle i');
+    if (themeToggle) {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      themeToggle.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+  }
+};
+
+// Global theme toggle function
+window.toggleTheme = function() {
+  window.themeManager.toggle();
+};
+
 // Debug: Check if script is loading
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', function() {
+  
+  // Initialize theme manager
+  window.themeManager.init();
   
   // Get DOM elements
   const adminToggle = document.getElementById('adminToggle');
@@ -13,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  // Create Supabase client
+  // Create Supabase client (cached)
   const supabaseClient = supabase.createClient(
     'https://xdjyeicdaemdjqntdwsy.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
@@ -22,6 +108,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Admin state
   let isAdmin = false;
   window.isAdmin = false; // Global erişim için
+  
+  // Cache for admin check
+  let adminCheckCache = null;
+  let adminCheckTime = 0;
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
   
   // Simple test - add click handler to admin button
   if (adminToggle) {
@@ -112,20 +203,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (data.user) {
           
-          // Check if user is admin
-          const { data: adminData, error: adminError } = await supabaseClient
-            .from('admin_users')
-            .select('is_admin')
-            .eq('id', data.user.id)
-            .single();
+          // Check if user is admin (with caching)
+          const adminResult = await checkAdminStatus(data.user.id);
           
-          if (adminError) {
-            console.error('Admin check error:', adminError);
-            alert('Admin yetkisi kontrol edilemedi');
-            return;
-          }
-          
-          if (adminData && adminData.is_admin) {
+          if (adminResult) {
             isAdmin = true;
             window.isAdmin = true; // Global erişim için
             updateAdminUI();
@@ -139,16 +220,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } catch (error) {
         console.error('Login error:', error);
-        console.error('Error details:', {
-          message: error.message,
-          code: error.code,
-          status: error.status,
-          stack: error.stack
-        });
         alert('Giriş yapılırken hata oluştu: ' + error.message);
       }
     });
     
+  }
+  
+  // Cached admin check function
+  async function checkAdminStatus(userId) {
+    const now = Date.now();
+    
+    // Check cache first
+    if (adminCheckCache && (now - adminCheckTime) < CACHE_DURATION) {
+      return adminCheckCache;
+    }
+    
+    try {
+      const { data: adminData, error: adminError } = await supabaseClient
+        .from('admin_users')
+        .select('is_admin')
+        .eq('id', userId)
+        .single();
+      
+      if (adminError) {
+        console.error('Admin check error:', adminError);
+        return false;
+      }
+      
+      // Update cache
+      adminCheckCache = adminData && adminData.is_admin;
+      adminCheckTime = now;
+      
+      return adminCheckCache;
+    } catch (error) {
+      console.error('Admin check error:', error);
+      return false;
+    }
   }
   
   // Check authentication status
@@ -157,15 +264,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const { data: { user } } = await supabaseClient.auth.getUser();
       
       if (user) {
-        
-        // Check if user is admin
-        const { data: adminData, error: adminError } = await supabaseClient
-          .from('admin_users')
-          .select('is_admin')
-          .eq('id', user.id)
-          .single();
-        
-        if (!adminError && adminData && adminData.is_admin) {
+        const adminResult = await checkAdminStatus(user.id);
+        if (adminResult) {
           isAdmin = true;
           window.isAdmin = true; // Global erişim için
           updateAdminUI();
@@ -189,6 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       isAdmin = false;
       window.isAdmin = false; // Global erişim için
+      adminCheckCache = null; // Clear cache
       updateAdminUI();
       alert('Admin çıkışı yapıldı!');
     } catch (error) {
@@ -254,6 +355,28 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Check auth status on load
   checkAuthStatus();
+
+  // Her sayfa yüklemesinde admin state'i localStorage'a da yaz
+  if (isAdmin) {
+    localStorage.setItem('isAdmin', 'true');
+  } else {
+    localStorage.removeItem('isAdmin');
+  }
+
+  // Eğer Supabase oturumu varsa ve admin ise, diğer sayfalarda da otomatik admin UI göster
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'isAdmin') {
+      if (e.newValue === 'true') {
+        isAdmin = true;
+        window.isAdmin = true;
+        updateAdminUI();
+      } else {
+        isAdmin = false;
+        window.isAdmin = false;
+        updateAdminUI();
+      }
+    }
+  });
   
   // Load posts with comments after auth check
   if (typeof loadPostsWithComments === 'function') {
@@ -283,3 +406,60 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style); 
+
+// Gece modunda inline style temizleyici ve otomatik CSS ekleyici
+function ensureDarkModeStyles() {
+  // CSS override'ı ekle (tekrar eklenmesin diye kontrol)
+  if (!document.getElementById('auto-darkmode-override')) {
+    const style = document.createElement('style');
+    style.id = 'auto-darkmode-override';
+    style.innerHTML = `
+[data-theme="dark"] .about-box,
+[data-theme="dark"] .playlist-about-box,
+[data-theme="dark"] .contact-about-box {
+  background: #18192b !important;
+  border-color: #23243a !important;
+  box-shadow: 0 4px 24px rgba(20, 20, 40, 0.25) !important;
+}
+[data-theme="dark"] .about-box-title,
+[data-theme="dark"] .playlist-title-accent,
+[data-theme="dark"] .contact-title-accent {
+  color: #8faaff !important;
+  border-bottom: 3px solid #8faaff !important;
+  background: transparent !important;
+}
+[data-theme="dark"] .about-box-title i,
+[data-theme="dark"] .playlist-title-accent i,
+[data-theme="dark"] .contact-title-accent i,
+[data-theme="dark"] .about-box-title svg,
+[data-theme="dark"] .playlist-title-accent svg,
+[data-theme="dark"] .contact-title-accent svg {
+  color: #8faaff !important;
+  fill: #8faaff !important;
+}
+[data-theme="dark"] .about-box[style],
+[data-theme="dark"] .playlist-about-box[style],
+[data-theme="dark"] .contact-about-box[style] {
+  background: #18192b !important;
+  border-color: #23243a !important;
+  box-shadow: 0 4px 24px rgba(20, 20, 40, 0.25) !important;
+}
+[data-theme="dark"] .about-box-title[style],
+[data-theme="dark"] .playlist-title-accent[style],
+[data-theme="dark"] .contact-title-accent[style] {
+  color: #8faaff !important;
+  border-bottom: 3px solid #8faaff !important;
+  background: transparent !important;
+}
+`;
+    document.head.appendChild(style);
+  }
+  // Inline style temizle
+  if (document.documentElement.getAttribute('data-theme') === 'dark') {
+    document.querySelectorAll('.about-box, .playlist-about-box, .contact-about-box, .about-box-title, .playlist-title-accent, .contact-title-accent').forEach(el => {
+      el.removeAttribute('style');
+    });
+  }
+}
+window.addEventListener('themeChanged', ensureDarkModeStyles);
+document.addEventListener('DOMContentLoaded', ensureDarkModeStyles); 

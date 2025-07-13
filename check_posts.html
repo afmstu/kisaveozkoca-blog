@@ -51,13 +51,9 @@
         <div id="results"></div>
     </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js'
-
-        const supabaseUrl = 'https://xdjyeicdaemdjqntdwsy.supabase.co'
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
-
-        const supabase = createClient(supabaseUrl, supabaseKey)
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="frontend/supabase.js"></script>
+    <script>
 
         window.checkPosts = async function() {
             const resultsDiv = document.getElementById('results')
@@ -66,7 +62,7 @@
             try {
                 console.log('Supabase\'den yazılar kontrol ediliyor...')
                 
-                const { data, error } = await supabase
+                const { data, error } = await window.supabaseClient
                     .from('posts')
                     .select('*')
                     .order('created_at', { ascending: false })
