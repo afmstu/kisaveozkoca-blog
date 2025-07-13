@@ -1,5 +1,5 @@
 // Supabase'den yazıları kontrol etmek için script
-import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js'
+const { createClient } = require('@supabase/supabase-js')
 
 const supabaseUrl = 'https://xdjyeicdaemdjqntdwsy.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'

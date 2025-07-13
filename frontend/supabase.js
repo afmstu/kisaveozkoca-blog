@@ -117,6 +117,7 @@ const blogService = {
     const comments = post.comments || []
     comments.push({
       id: Date.now(),
+      postId: postId, // Post ID'sini ekle
       name: commentData.name,
       text: commentData.text,
       replies: [],
@@ -159,6 +160,7 @@ const blogService = {
       }
       comments[commentIndex].replies.push({
         id: Date.now(),
+        postId: postId, // Post ID'sini ekle
         name: replyData.name,
         text: replyData.text,
         timestamp: new Date().toISOString(),

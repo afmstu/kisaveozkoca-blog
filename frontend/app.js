@@ -211,6 +211,9 @@ document.addEventListener('DOMContentLoaded', function() {
       adminToggle.innerHTML = '<i class="fas fa-user-shield"></i>';
       adminToggle.classList.add('admin-active');
       adminToggle.title = 'Admin (Çıkış için tıklayın)';
+      
+      // Update global admin state
+      window.isAdmin = true;
     } else {
       // Hide admin post form
       if (adminPostForm) {
@@ -221,6 +224,14 @@ document.addEventListener('DOMContentLoaded', function() {
       adminToggle.innerHTML = '<i class="fas fa-crown"></i>';
       adminToggle.classList.remove('admin-active');
       adminToggle.title = 'Admin Girişi';
+      
+      // Update global admin state
+      window.isAdmin = false;
+    }
+    
+    // Reload posts to show/hide admin controls
+    if (typeof loadPostsWithComments === 'function') {
+      loadPostsWithComments();
     }
   }
   
@@ -243,6 +254,11 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Check auth status on load
   checkAuthStatus();
+  
+  // Load posts with comments after auth check
+  if (typeof loadPostsWithComments === 'function') {
+    loadPostsWithComments();
+  }
 });
 
 // Add some basic styling for modal fallback

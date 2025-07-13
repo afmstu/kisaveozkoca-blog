@@ -291,6 +291,8 @@
   <!-- Load scripts at the end for better performance -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
   <script>
     // Inline critical JavaScript for faster loading
     let isAdmin = false;
@@ -302,31 +304,232 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkanllaWNkYWVtZGpxbnRkd3N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzAyNDksImV4cCI6MjA2NzMwNjI0OX0.uoUGaNtWtfj_sYLKZdZuwFQX4I79BfYGYLxJ463Hb5Y'
     );
     
-    // Load posts immediately
-    async function loadPostsFast() {
+    // Load posts with comments
+    async function loadPostsWithComments() {
       try {
         const { data, error } = await supabaseClient
           .from('posts')
           .select('*')
-          .order('created_at', { ascending: false })
-          .limit(5); // Only load first 5 posts initially
+          .order('created_at', { ascending: false });
         
         const container = document.getElementById('postsContainer');
         if (data && data.length > 0) {
           container.innerHTML = data.map(post => `
-            <div class="post-card">
+            <div class="post-card" data-post-id="${post.id}">
               <div class="post-header">
                 <h3 class="post-title">${post.title}</h3>
                 <small class="text-muted">${new Date(post.created_at).toLocaleDateString('tr-TR')}</small>
+                ${window.isAdmin ? `<button class="btn btn-danger btn-sm ms-2" onclick="deletePost(${post.id})"><i class="fas fa-trash"></i></button>` : ''}
               </div>
               <div class="post-content">${post.content.replace(/\n/g, '<br>')}</div>
+              
+              <!-- Comments Section -->
+              <div class="comments-section">
+                <h4 class="comments-title">
+                  <i class="fas fa-comments"></i>
+                  Yorumlar (${post.comments ? post.comments.length : 0})
+                </h4>
+                
+                <!-- Comments List -->
+                <div class="comments-list" id="comments-${post.id}">
+                  ${renderComments(post.comments || [])}
+                </div>
+                
+                <!-- Comment Form -->
+                <div class="comment-form">
+                  <h5><i class="fas fa-edit"></i>Yorum Yap</h5>
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="comment-name-${post.id}" placeholder="Adınız ve soyadınız" required>
+                    <textarea class="form-control" id="comment-text-${post.id}" placeholder="Düşüncelerinizi paylaşın..." rows="3" required></textarea>
+                    <button class="btn btn-outline-secondary" onclick="addComment(${post.id})">
+                      <i class="fas fa-paper-plane"></i> Yorum Yap
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           `).join('');
         } else {
           container.innerHTML = '<div class="empty-state"><i class="fas fa-pen"></i><h4>Henüz yazı yok</h4></div>';
         }
       } catch (error) {
-        console.error('Fast load error:', error);
+        console.error('Load posts error:', error);
+      }
+    }
+    
+    // Render comments
+    function renderComments(comments) {
+      if (!comments || comments.length === 0) {
+        return '<div class="text-muted">Henüz yorum yok. İlk yorumu siz yapın!</div>';
+      }
+      
+      return comments.map(comment => `
+        <div class="comment-item" data-comment-id="${comment.id}">
+          <div class="comment-header">
+            <strong>${comment.name}</strong>
+            <small class="text-muted">${comment.date}</small>
+            ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteComment(${comment.postId}, ${comment.id})"><i class="fas fa-trash"></i></a>` : ''}
+          </div>
+          <div class="comment-text">${comment.text}</div>
+          
+          <!-- Reply Button -->
+          <div class="comment-actions">
+            <a href="#" class="reply-btn" onclick="showReplyForm(${comment.id})">
+              <i class="fas fa-reply"></i> Yanıtla
+            </a>
+          </div>
+          
+          <!-- Reply Form (Hidden by default) -->
+          <div class="reply-form" id="reply-form-${comment.id}" style="display: none;">
+            <div class="input-group">
+              <input type="text" class="form-control" id="reply-name-${comment.id}" placeholder="Adınız ve soyadınız" required>
+              <textarea class="form-control" id="reply-text-${comment.id}" placeholder="Yanıtınızı yazın..." rows="2" required></textarea>
+              <button class="btn btn-outline-secondary" onclick="addReply(${comment.postId}, ${comment.id})">
+                <i class="fas fa-paper-plane"></i> Yanıtla
+              </button>
+            </div>
+          </div>
+          
+          <!-- Replies Section -->
+          ${renderReplies(comment.replies || [], comment.id)}
+        </div>
+      `).join('');
+    }
+    
+    // Render replies
+    function renderReplies(replies, commentId) {
+      if (!replies || replies.length === 0) {
+        return '';
+      }
+      
+      return `
+        <div class="replies-section">
+          ${replies.map(reply => `
+            <div class="reply-item" data-reply-id="${reply.id}">
+              <div class="reply-header">
+                <strong>${reply.name}</strong>
+                <small class="text-muted">${reply.date}</small>
+                ${window.isAdmin ? `<a href="#" class="delete-btn" onclick="deleteReply(${reply.postId}, ${commentId}, ${reply.id})"><i class="fas fa-trash"></i></a>` : ''}
+              </div>
+              <div class="reply-text">${reply.text}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    
+    // Add comment
+    async function addComment(postId) {
+      const nameInput = document.getElementById(`comment-name-${postId}`);
+      const textInput = document.getElementById(`comment-text-${postId}`);
+      
+      const name = nameInput.value.trim();
+      const text = textInput.value.trim();
+      
+      if (!name || !text) {
+        alert('Lütfen adınızı ve yorumunuzu girin!');
+        return;
+      }
+      
+      try {
+        await window.blogService.addComment(postId, { name, text });
+        nameInput.value = '';
+        textInput.value = '';
+        loadPostsWithComments(); // Reload posts to show new comment
+        alert('Yorumunuz başarıyla eklendi!');
+      } catch (error) {
+        console.error('Add comment error:', error);
+        alert('Yorum eklenirken hata oluştu: ' + error.message);
+      }
+    }
+    
+    // Add reply
+    async function addReply(postId, commentId) {
+      const nameInput = document.getElementById(`reply-name-${commentId}`);
+      const textInput = document.getElementById(`reply-text-${commentId}`);
+      
+      const name = nameInput.value.trim();
+      const text = textInput.value.trim();
+      
+      if (!name || !text) {
+        alert('Lütfen adınızı ve yanıtınızı girin!');
+        return;
+      }
+      
+      try {
+        await window.blogService.addReply(postId, commentId, { name, text });
+        nameInput.value = '';
+        textInput.value = '';
+        hideReplyForm(commentId);
+        loadPostsWithComments(); // Reload posts to show new reply
+        alert('Yanıtınız başarıyla eklendi!');
+      } catch (error) {
+        console.error('Add reply error:', error);
+        alert('Yanıt eklenirken hata oluştu: ' + error.message);
+      }
+    }
+    
+    // Show reply form
+    function showReplyForm(commentId) {
+      const replyForm = document.getElementById(`reply-form-${commentId}`);
+      if (replyForm) {
+        replyForm.style.display = 'block';
+      }
+    }
+    
+    // Hide reply form
+    function hideReplyForm(commentId) {
+      const replyForm = document.getElementById(`reply-form-${commentId}`);
+      if (replyForm) {
+        replyForm.style.display = 'none';
+      }
+    }
+    
+    // Delete comment (admin only)
+    async function deleteComment(postId, commentId) {
+      if (!window.isAdmin) return;
+      
+      if (confirm('Bu yorumu silmek istediğinizden emin misiniz?')) {
+        try {
+          await window.blogService.deleteComment(postId, commentId);
+          loadPostsWithComments();
+          alert('Yorum silindi!');
+        } catch (error) {
+          console.error('Delete comment error:', error);
+          alert('Yorum silinirken hata oluştu: ' + error.message);
+        }
+      }
+    }
+    
+    // Delete reply (admin only)
+    async function deleteReply(postId, commentId, replyId) {
+      if (!window.isAdmin) return;
+      
+      if (confirm('Bu yanıtı silmek istediğinizden emin misiniz?')) {
+        try {
+          await window.blogService.deleteReply(postId, commentId, replyId);
+          loadPostsWithComments();
+          alert('Yanıt silindi!');
+        } catch (error) {
+          console.error('Delete reply error:', error);
+          alert('Yanıt silinirken hata oluştu: ' + error.message);
+        }
+      }
+    }
+    
+    // Delete post (admin only)
+    async function deletePost(postId) {
+      if (!window.isAdmin) return;
+      
+      if (confirm('Bu yazıyı silmek istediğinizden emin misiniz?')) {
+        try {
+          await window.blogService.deletePost(postId);
+          loadPostsWithComments();
+          alert('Yazı silindi!');
+        } catch (error) {
+          console.error('Delete post error:', error);
+          alert('Yazı silinirken hata oluştu: ' + error.message);
+        }
       }
     }
     
@@ -363,13 +566,16 @@
       }
     }
     
-    // Initialize theme
+    // Initialize theme and admin state
     document.addEventListener('DOMContentLoaded', function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
       
+      // Set global admin state
+      window.isAdmin = false;
+      
       // Load content immediately
-      loadPostsFast();
+      loadPostsWithComments();
       loadPlaylistsFast();
       
       // Theme toggle
