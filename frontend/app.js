@@ -520,8 +520,9 @@ function renderReplies(replies, commentId, postId) {
     `;
 }
 
-// addReply fonksiyonunun başına kontrol ekle
+// addReply fonksiyonunun başında kontrol ekle
 window.addReply = function(postId, commentId) {
+    console.log('addReply çağrısı:', postId, typeof postId, commentId, typeof commentId);
     if (!postId || !commentId) {
         alert('Yanıt eklenemiyor: postId veya commentId eksik!');
         return;
